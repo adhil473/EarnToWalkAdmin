@@ -1,0 +1,62 @@
+import React, { Suspense } from 'react'
+import { Routes, Route, Navigate } from "react-router-dom";
+import { useAuth } from '../context/AuthContext';
+import MainLayout from "../layout/MainLayout";
+import Loader from "../layout/Loader";
+import Overview from '../pages/Overview';
+import Support from '../pages/Support';
+import Referral from '../pages/Referral';
+import TreeStructure from '../pages/TreeStructure';
+import Tree from '../pages/Tree';
+import Bvlog from '../pages/Bvlog';
+import MLMPageNotFound from '../pages/404';
+import SignIn from '../pages/SignIn';
+import SignUp from '../pages/SignUp';
+import TransactionLog from '../pages/TransactionLog';
+import DepositLog from '../pages/DepositLog';
+import WithdrawLog from '../pages/WithdrawLog';
+import InvestLog from '../pages/InvestLog';
+import ReferralCommissions from '../pages/ReferralCommissions';
+import BinaryCommissions from '../pages/BinaryCommissions';
+import StakingReward from '../pages/StakingReward';
+import Member from '../pages/Member';
+import UserDetails from '../pages/UserDetails';
+import Profile from '../pages/Profile';
+import Kyc from '../pages/Kyc';
+
+const AppContent = () => {
+    const { isAuthenticated } = useAuth();
+
+    return (
+        <Suspense fallback={<Loader />}>
+            <Routes>
+                <Route path="/signin" element={!isAuthenticated ? <SignIn/> : <Navigate to="/dashboard" replace />} />
+                <Route path="/register/:referral?" element={!isAuthenticated ? <SignUp/> : <Navigate to="/dashboard" replace />} />
+                <Route path="/" element={isAuthenticated ? <MainLayout /> : <Navigate to="/signin" replace />}>
+                      <Route index element={<Overview />} />
+                      <Route path="dashboard" element={<Overview />} />
+                      <Route path="member" element={<Member/>} />
+                      <Route path="user-details/:userId" element={<UserDetails/>} />
+                      <Route path="profile" element={<Profile/>} />
+                      <Route path="kyc" element={<Kyc/>} />
+                      <Route path="support" element={<Support/>} />
+                      <Route path="referral" element={<Referral/>} />
+                      <Route path="treeStructure/:userId" element={<TreeStructure/>} />
+                      <Route path="tree" element={<Tree/>} />
+                      <Route path="bvlog" element={<Bvlog/>} />
+                      <Route path="reports/transaction-log" element={<TransactionLog/>} />
+                      <Route path="reports/deposit-log" element={<DepositLog/>} />
+                      <Route path="reports/withdraw-log" element={<WithdrawLog/>} />
+                      <Route path="reports/invest-log" element={<InvestLog/>} />
+                      <Route path="reports/referral-commissions" element={<ReferralCommissions/>} />
+                      <Route path="reports/binary-commissions" element={<BinaryCommissions/>} />
+                      <Route path="reports/staking-reward" element={<StakingReward/>} />
+                </Route>
+            <Route path="*" element={<MLMPageNotFound/>} />
+            </Routes>
+        </Suspense>
+    )
+}
+
+export default AppContent
+

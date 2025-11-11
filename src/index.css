@@ -1,0 +1,147 @@
+@import 'tailwindcss';
+
+::-webkit-scrollbar {
+    display: none;
+}
+
+@keyframes modalBackdropIn {
+  from {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+  }
+  to {
+    opacity: 1;
+    backdrop-filter: blur(8px);
+  }
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.85) translateY(-20px);
+    filter: blur(4px);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.02) translateY(-5px);
+    filter: blur(1px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    filter: blur(0px);
+  }
+}
+
+@keyframes modalContentFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: modalBackdropIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.animate-scaleIn {
+  animation: modalSlideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+.animate-scaleIn > * {
+  animation: modalContentFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+}
+
+.animate-scaleIn > *:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.animate-scaleIn > *:nth-child(3) {
+  animation-delay: 0.2s;
+}
+
+.animate-scaleIn > :nth-child(4) {
+  animation-delay: 0.25s;
+}
+/* Gradient Animation */
+@keyframes gradient-x {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.animate-gradient-x {
+  background-size: 200% 200%;
+  animation: gradient-x 10s ease infinite;
+}
+
+/* 1. Base Button Styling (Reuse) */
+.animated-tree-button {
+  padding: 8px 16px;
+  border: 1px solid #1de9a6;
+  border-radius: 8px;
+  background-color: transparent;
+  color: #1de9a6;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  display: inline-block;
+  overflow: hidden; 
+  /* Added position: relative to ensure z-index works on letters */
+  position: relative; 
+}
+
+/* 2. Hover/Focus State (Reuse) */
+.animated-tree-button:hover,
+.animated-tree-button:focus {
+  background-color: rgba(29, 233, 166, 0.1);
+  outline: none;
+}
+
+/* 3. Text Preparation (Reuse) */
+.animated-tree-button span {
+  display: inline-flex; 
+}
+
+/* 4. The One-Time Shuffle and Settle Animation Keyframes */
+@keyframes shuffleAndSettle {
+  /* Start (Normal) */
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+    opacity: 1;
+  }
+  
+  /* Peak Jump/Shuffle (Around 20-30%) */
+  25% {
+    /* Random lateral movement and rotation for a shuffle look */
+    transform: translate(3px, -5px) rotate(5deg); 
+    opacity: 0.8;
+  }
+
+  /* Second Shuffle/Vibration (Around 50-70%) */
+  50% {
+    /* Random direction movement */
+    transform: translate(-2px, 3px) rotate(-3deg);
+    opacity: 0.9;
+  }
+  
+  /* End (Return to Normal) */
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+/* 5. Applying the Animation ONLY ONCE on Hover/Focus */
+.animated-tree-button:hover span b,
+.animated-tree-button:focus span b {
+  /* Set animation to run once (1) and then stay at the end state (forwards) */
+  animation: shuffleAndSettle 0.8s ease-out 1 forwards; 
+}
