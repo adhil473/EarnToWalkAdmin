@@ -1,8 +1,8 @@
 import axios from 'axios'
 
-export const basicURL = "http://192.168.29.112:5020/api/" ;
+// export const basicURL = "http://192.168.29.112:5020/api/" ;
 
-// export const basicURL = "https://backend.axtotoken.com/api/" ;
+export const basicURL = "https://backend.axtotoken.com/api/" ;
 
 
 export const  axiosConfig = axios.create({
