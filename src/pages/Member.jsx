@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { getUsers } from '../api/serviceApi';
-import { Filter } from 'lucide-react';
+import { Filter, Eye } from 'lucide-react';
 
 const Member = () => {
   const navigate = useNavigate()
@@ -95,7 +95,7 @@ const Member = () => {
         <div className="overflow-x-auto border border-[#1f2e2e] rounded-lg">
           <div className="min-w-[800px]">
             {/* Table Header */}
-            <div className="grid grid-cols-6 bg-[#050D0F] text-gray-300 text-sm font-medium py-3 px-5 border-b border-[#1f2e2e]">
+            <div className="grid grid-cols-7 bg-[#050D0F] text-gray-300 text-sm font-medium py-3 px-5 border-b border-[#1f2e2e]">
               {/* <p>User ID</p> */}
               <p>Username</p>
               <p>Wallet Address</p>
@@ -103,6 +103,7 @@ const Member = () => {
               <p>Active Package</p>
               <p>Total Earnings</p>
               <p>Status</p>
+              <p>view</p>
             </div>
 
             {/* Table Rows */}
@@ -119,11 +120,23 @@ const Member = () => {
                   }}
                   whileHover={{ y: -2, transition: { duration: 0.2 } }}
                   onClick={() => handlesingleuser(user.id)}
-                  className="grid grid-cols-6 items-center bg-[#050D0F] text-sm text-gray-300 px-5 py-3 border-b border-[#1f2e2e] hover:bg-[#112828] transition cursor-pointer"
+                  className="grid grid-cols-7 items-center bg-[#050D0F] text-sm text-gray-300 px-5 py-3 border-b border-[#1f2e2e] hover:bg-[#112828] transition cursor-pointer"
                 >
                   {/* <p>{user.id.length > 8 ? user.id.substring(0, 8) + '...' : user.id}</p> */}
                   <p>{user.name}</p>
-                  <p>{user.walletAddress}</p>
+                  <p 
+                    className="cursor-pointer hover:text-[#1de9a6] transition relative"
+                    title="Click to copy"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigator.clipboard.writeText(user.walletAddress);
+                    }}
+                  >
+                    {user.walletAddress?.length > 10 
+                      ? `${user.walletAddress.substring(0, 12)}...${user.walletAddress.substring(user.walletAddress.length - 0)}` 
+                      : user.walletAddress
+                    }
+                  </p>
                   <p>{user.sponsorId}</p>
                   <p className='text-[#31BDD0]'>{user.activePackage} USDT</p>
                   <p className='text-[#0d9c44ff]'>{Number(user?.totalEarnings).toFixed(3)} USDT</p>
@@ -140,6 +153,10 @@ const Member = () => {
                   }}>
                     {user.status}
                   </div>
+                  <Eye 
+                    className="w-4 h-4 cursor-pointer hover:text-[#1de9a6] transition" 
+                    onClick={() => handlesingleuser(user.id)}
+                  />
                 </motion.div>
               ))}
             </AnimatePresence>

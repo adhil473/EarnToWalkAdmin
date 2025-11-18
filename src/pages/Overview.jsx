@@ -64,7 +64,7 @@ const Overview = () => {
                 <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
                     <div className="flex items-center gap-4">
                         <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-[#1a3f3f] flex items-center justify-center text-lg font-semibold flex-shrink-0">
-                            KE
+                            AP
                         </div>
                         <div>
                             <h1 className="text-xl md:text-2xl font-semibold">Welcome Back, {adminData?.name}</h1>

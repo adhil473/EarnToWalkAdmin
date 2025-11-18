@@ -17,9 +17,11 @@ const Bvlog = () => {
   const handleGetData = async () => {
     try {
       const res = await getbvlogData();
-      setData(res.data || res);
+      const responseData = res.data || res;
+      setData(Array.isArray(responseData) ? responseData : []);
     } catch (error) {
       console.error('Error fetching bvlog data:', error);
+      setData([]);
     }
   }
 
@@ -45,7 +47,7 @@ const Bvlog = () => {
 
           {/* Table Rows */}
           <AnimatePresence>
-            {data.map((item, index) => (
+            {Array.isArray(data) && data.map((item, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 30 }}
