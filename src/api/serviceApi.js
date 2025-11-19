@@ -250,3 +250,33 @@ export const updateTicketStatus = async (id,status) => {
         return error?.response?.data || error.message
     }
 }
+
+export const withdrawHistory = async (page = 1, limit = 10) => {
+    try {
+        const res = await axiosConfig.get(`admin/withdrawals/all?page=${page}&limit=${limit}`);
+        return res.data;
+    } catch (error) {
+        console.error('Transaction fetch error:', error);
+        return error?.response?.data || { message: error.message };
+    }
+};
+
+export const investHistory = async (page = 1, limit = 10) => {
+    try {
+        const res = await axiosConfig.get(`admin/purchases/all?page=${page}&limit=${limit}`);
+        return res.data;
+    } catch (error) {
+        console.error('Transaction fetch error:', error);
+        return error?.response?.data || { message: error.message };
+    }
+};
+
+export const investStatus = async () => {
+    try {
+        const res = await axiosConfig.get(`admin/purchases/stats`);
+        return res.data;
+    } catch (error) {
+        console.error('Transaction fetch error:', error);
+        return error?.response?.data || { message: error.message };
+    }
+};

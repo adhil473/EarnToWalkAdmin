@@ -34,7 +34,7 @@ const AdminAside = ({ open, setOpen }) => {
   const menuItems = [
     { name: "Dashboard", redirect_url: "/dashboard", icon: dashboard, iconSelected: dashboardSelected },
     { name: "Members", redirect_url: "/member", icon: plan, iconSelected: planSelected },
-    { name: "BV Log", redirect_url: "/bvlog", icon: bvlog, iconSelected: bvlogSelected },
+    // { name: "BV Log", redirect_url: "/bvlog", icon: bvlog, iconSelected: bvlogSelected },
     // { name: "Referrals", redirect_url: "/referral", icon: referrals, iconSelected: referralsSelected },
     { 
       name: "Reports", 
@@ -42,13 +42,13 @@ const AdminAside = ({ open, setOpen }) => {
       icon: reports, 
       iconSelected: reportsSelected,
       submenu: [
-        { name: "Transaction Log", redirect_url: "/reports/transaction-log" },
-        { name: "Deposit Log", redirect_url: "/reports/deposit-log" },
+        // { name: "Transaction Log", redirect_url: "/reports/transaction-log" },
+        // { name: "Deposit Log", redirect_url: "/reports/deposit-log" },
         { name: "Withdraw Log", redirect_url: "/reports/withdraw-log" },
         { name: "Invest Log", redirect_url: "/reports/invest-log" },
         // { name: "Referral Commissions", redirect_url: "/reports/referral-commissions" },
-        { name: "Binary Commissions", redirect_url: "/reports/binary-commissions" },
-        { name: "Staking Reward", redirect_url: "/reports/staking-reward" },
+        // { name: "Binary Commissions", redirect_url: "/reports/binary-commissions" },
+        // { name: "Staking Reward", redirect_url: "/reports/staking-reward" },
       ]
     },
     { name: "KYC ", redirect_url: "/kyc", icon: withdraw, iconSelected: withdrawSelected },
