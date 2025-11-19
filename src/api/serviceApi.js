@@ -280,3 +280,13 @@ export const investStatus = async () => {
         return error?.response?.data || { message: error.message };
     }
 };
+
+export const withdrawAllAccept = async () => {
+    try {
+        const res = await axiosConfig.post(`admin/withdrawals/approve-all`);
+        return res.data;
+    } catch (error) {
+        console.error('Transaction fetch error:', error);
+        return error?.response?.data || { message: error.message };
+    }
+};

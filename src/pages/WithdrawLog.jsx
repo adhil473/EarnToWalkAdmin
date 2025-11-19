@@ -1,12 +1,14 @@
 import React,{useEffect,useState} from 'react'
-import { withdrawHistory } from '../api/serviceApi'
+import { withdrawAllAccept, withdrawHistory } from '../api/serviceApi'
 import { motion, AnimatePresence } from 'framer-motion'
 import tether from '../assets/usdt.png'
-
+import { useToast } from '../context/ToastContext'
 function WithdrawLog() {
+  const { showToast } = useToast()
   const [historyData, setHistoryData] = useState([])
   const [pagination, setPagination] = useState({})
   const [currentPage, setCurrentPage] = useState(1)
+  const [showConfirmModal, setShowConfirmModal] = useState(false)
 
   const handlegetHistory = async(page = 1) => {
     try {
@@ -27,12 +29,33 @@ function WithdrawLog() {
     handlegetHistory()
   }, [])
 
+  const handlewithdrawAll=async()=>{
+    try {
+      const res =await withdrawAllAccept();
+       if(res.success){
+        showToast(res.message || 'All withdrawals approved successfully')
+        handlegetHistory(currentPage)
+        handlegetHistory()
+       }
+    } catch (error) {
+      
+    }
+    setShowConfirmModal(false)
+  }
+
   return (
     <div className='md:p-8 space-y-10 mt-20 md:ml-2 p-2'>
       <div>
         <h3 className="text-white text-xl font-semibold mb-4">Withdraw Log</h3>
+        <div className="flex justify-end mb-4">
+          <button 
+            className="bg-[#00d1b2] hover:bg-[#00b89f] text-white px-6 py-2 rounded-lg font-semibold transition-colors duration-200"
+            onClick={() => setShowConfirmModal(true)}
+          >
+            Accept All
+          </button>
+        </div>
       </div>
-      
       {/* Table Section */}
       <div className="overflow-x-auto border border-[#1f2e2e] rounded-lg">
         <div className="min-w-[1200px]">
@@ -87,11 +110,11 @@ function WithdrawLog() {
                     </div>
                     <div>{item.userId.name}</div>
                     <div
-                      className="cursor-pointer hover:text-[#00d1b2] transition-colors"
+                      className="cursor-pointer hover:text-[#00d1b2] transition-colors truncate"
                       onClick={() => copyToClipboard(item.userId.email)}
-                      title="Click to copy"
+                      title={item.userId.email}
                     >
-                      {item.userId.email}
+                      {item.userId.email.length > 20 ? `${item.userId.email.slice(0, 20)}...` : item.userId.email}
                     </div>
                     <div className="flex items-center gap-2 text-[#00c896] font-semibold">
                       <img src={tether} alt='tether' className='w-4' />
@@ -179,6 +202,30 @@ function WithdrawLog() {
           >
             Next
           </button>
+        </div>
+      )}
+
+      {/* Confirmation Modal */}
+      {showConfirmModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-[#050D0F] border border-[#1f2e2e] rounded-lg p-6 max-w-md w-full mx-4">
+            <h3 className="text-white text-lg font-semibold mb-4">Confirm Action</h3>
+            <p className="text-gray-300 mb-6">Are you sure you want to accept all pending withdrawals?</p>
+            <div className="flex gap-3 justify-end">
+              <button
+                className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors"
+                onClick={() => setShowConfirmModal(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="px-4 py-2 bg-[#00d1b2] hover:bg-[#00b89f] text-white rounded-lg transition-colors"
+                onClick={handlewithdrawAll}
+              >
+                Yes, Accept All
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
