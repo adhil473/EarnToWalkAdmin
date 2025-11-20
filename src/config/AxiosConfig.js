@@ -28,7 +28,8 @@ axiosConfig.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401 && 
         error.response?.data?.success === false && 
-        error.response?.data?.message === "Invalid token.") {
+        (error.response?.data?.message === "Invalid token." || 
+         error.response?.data?.message === "Invalid token or admin not found.")) {
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
       window.location.href = '/signin';
