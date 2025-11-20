@@ -95,9 +95,10 @@ const Member = () => {
         <div className="overflow-x-auto border border-[#1f2e2e] rounded-lg">
           <div className="min-w-[800px]">
             {/* Table Header */}
-            <div className="grid grid-cols-7 bg-[#050D0F] text-gray-300 text-sm font-medium py-3 px-5 border-b border-[#1f2e2e]">
+            <div className="grid grid-cols-8 bg-[#050D0F] text-gray-300 text-sm font-medium py-3 px-5 border-b border-[#1f2e2e]">
               {/* <p>User ID</p> */}
               <p>Username</p>
+              <p>User Id</p>
               <p>Wallet Address</p>
               <p>Sponsor ID</p>
               <p>Active Package</p>
@@ -120,10 +121,20 @@ const Member = () => {
                   }}
                   whileHover={{ y: -2, transition: { duration: 0.2 } }}
                   onClick={() => handlesingleuser(user.id)}
-                  className="grid grid-cols-7 items-center bg-[#050D0F] text-sm text-gray-300 px-5 py-3 border-b border-[#1f2e2e] hover:bg-[#112828] transition cursor-pointer"
+                  className="grid grid-cols-8 items-center bg-[#050D0F] text-sm text-gray-300 px-5 py-3 border-b border-[#1f2e2e] hover:bg-[#112828] transition cursor-pointer"
                 >
                   {/* <p>{user.id.length > 8 ? user.id.substring(0, 8) + '...' : user.id}</p> */}
                   <p>{user.name}</p>
+                  <p 
+                    className="cursor-pointer hover:text-[#1de9a6] transition"
+                    title="Click to copy"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigator.clipboard.writeText(user.userId);
+                    }}
+                  >
+                    {user.userId}
+                  </p>
                   <p 
                     className="cursor-pointer hover:text-[#1de9a6] transition relative"
                     title="Click to copy"
