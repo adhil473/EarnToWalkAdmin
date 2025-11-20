@@ -277,26 +277,32 @@ const UserDetails = () => {
         <p className="text-sm text-gray-400 mt-1 mb-4">Current Investment Packages And Returns.</p>
 
         <div className="space-y-4">
-          {userData.packages.map((pkg, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 1.0 + index * 0.1 }}
-              className="bg-[#050D0F] border border-[#1f2e2e] p-4 rounded-xl flex flex-col md:flex-row justify-between md:items-center gap-4"
-            >
-              <div>
-                <div className="flex items-center">
-                  <p className="text-md font-medium">{pkg.type}</p> {pkg.isActiveForBinary && <span className="text-xs text-green-500  px-2 py-0.5  ml-2"> BinaryActive</span>}
+          {userData.packages && userData.packages.length > 0 ? (
+            userData.packages.map((pkg, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 1.0 + index * 0.1 }}
+                className="bg-[#050D0F] border border-[#1f2e2e] p-4 rounded-xl flex flex-col md:flex-row justify-between md:items-center gap-4"
+              >
+                <div>
+                  <div className="flex items-center">
+                    <p className="text-md font-medium">{pkg.type}</p> {pkg.isActiveForBinary && <span className="text-xs text-green-500  px-2 py-0.5  ml-2"> BinaryActive</span>}
+                  </div>
+                  <p className="text-sm text-gray-400 mt-1">Package Amount: {pkg.amount} USDT</p>
                 </div>
-                <p className="text-sm text-gray-400 mt-1">Package Amount: {pkg.amount} USDT</p>
-              </div>
-              <div className="md:text-right">
-                <p className="text-[#0d9c44ff] font-semibold">{Number(pkg.totalROIEarned).toFixed(3)} USDT</p>
-                <p className="text-sm text-gray-400">ROI Earned</p>
-              </div>
-            </motion.div>
-          ))}
+                <div className="md:text-right">
+                  <p className="text-[#0d9c44ff] font-semibold">{Number(pkg.totalROIEarned).toFixed(3)} USDT</p>
+                  <p className="text-sm text-gray-400">ROI Earned</p>
+                </div>
+              </motion.div>
+            ))
+          ) : (
+            <div className="bg-[#050D0F] border border-[#1f2e2e] p-8 rounded-xl text-center">
+              <p className="text-gray-400 text-sm">No packages purchased yet</p>
+            </div>
+          )}
         </div>
       </motion.div>
 
@@ -321,61 +327,64 @@ const UserDetails = () => {
 
             {/* Table Rows */}
             <AnimatePresence>
-              {incomHistory.map((item, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{
-                    duration: 0.6,
-                    ease: "easeOut",
-                    delay: index * 0.1
-                  }}
-                  whileHover={{ y: -2, transition: { duration: 0.2 } }}
-                  className="grid grid-cols-4 items-center bg-[#050D0F] text-sm text-gray-300 px-5 py-3 border-b border-[#1f2e2e] hover:bg-[#112828] transition"
-                >
-                  <div>
-                    <p>
-                      {new Date(item?.date).toLocaleString('en-GB', {
-                        day: '2-digit',
-                        month: '2-digit',
-                        year: '2-digit',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        hour12: true
-                      })}
-                    </p>
-
-                    {/* <p className="text-xs text-gray-500">{formatTime(item?.time)}</p> */}
-                  </div>
-                  {/* <p>{item?.name}</p> */}
-                  <p>  {item?.description?.length > 40
-                    ? item.description.slice(0, 40) + '...'
-                    : item.description}</p>
-                  <div className='text-[#0d9c44ff] flex items-center gap-2'>
-                    <img src={usdt} alt="usdt" className='w-6' /> {item?.amount}
-                  </div>
-                  <div style={{
-                    display: 'inline-block',
-                    padding: '5px 12px',
-                    backgroundColor: '#0e1a0e',
-                    color: '#0d9c44ff',
-                    border: '1px solid #0d9c44ff',
-                    borderRadius: '10px',
-                    fontWeight: 500,
-                    fontSize: '14px',
-                    width: 'fit-content'
-                  }}>
-                    {item?.status}
-                  </div>
-                </motion.div>
-              ))}
+              {incomHistory && incomHistory.length > 0 ? (
+                incomHistory.map((item, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{
+                      duration: 0.6,
+                      ease: "easeOut",
+                      delay: index * 0.1
+                    }}
+                    whileHover={{ y: -2, transition: { duration: 0.2 } }}
+                    className="grid grid-cols-4 items-center bg-[#050D0F] text-sm text-gray-300 px-5 py-3 border-b border-[#1f2e2e] hover:bg-[#112828] transition"
+                  >
+                    <div>
+                      <p>
+                        {new Date(item?.date).toLocaleString('en-GB', {
+                          day: '2-digit',
+                          month: '2-digit',
+                          year: '2-digit',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                          hour12: true
+                        })}
+                      </p>
+                    </div>
+                    <p>{item?.description?.length > 40
+                      ? item.description.slice(0, 40) + '...'
+                      : item.description}</p>
+                    <div className='text-[#0d9c44ff] flex items-center gap-2'>
+                      <img src={usdt} alt="usdt" className='w-6' /> {item?.amount}
+                    </div>
+                    <div style={{
+                      display: 'inline-block',
+                      padding: '5px 12px',
+                      backgroundColor: '#0e1a0e',
+                      color: '#0d9c44ff',
+                      border: '1px solid #0d9c44ff',
+                      borderRadius: '10px',
+                      fontWeight: 500,
+                      fontSize: '14px',
+                      width: 'fit-content'
+                    }}>
+                      {item?.status}
+                    </div>
+                  </motion.div>
+                ))
+              ) : (
+                <div className="bg-[#050D0F] p-8 text-center">
+                  <p className="text-gray-400 text-sm">No income transactions found</p>
+                </div>
+              )}
             </AnimatePresence>
           </div>
         </div>
 
         {/* Pagination */}
-        {totalPages > 1 && (
+        {incomHistory && incomHistory.length > 0 && totalPages > 1 && (
           <div className="flex justify-center items-center mt-6 space-x-2">
             <button
               onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
@@ -416,7 +425,6 @@ const UserDetails = () => {
             </button>
           </div>
         )}
-
       </motion.div>
     </div>
   )

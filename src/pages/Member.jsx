@@ -108,7 +108,7 @@ const Member = () => {
 
             {/* Table Rows */}
             <AnimatePresence>
-              {usersData.map((user, index) => (
+              {usersData && usersData.length > 0 ? usersData.map((user, index) => (
                 <motion.div
                   key={user.id}
                   initial={{ opacity: 0, y: 30 }}
@@ -158,7 +158,11 @@ const Member = () => {
                     onClick={() => handlesingleuser(user.id)}
                   />
                 </motion.div>
-              ))}
+              )) : (
+                <div className="text-center py-8 text-gray-400">
+                  No members found
+                </div>
+              )}
             </AnimatePresence>
           </div>
         </div>

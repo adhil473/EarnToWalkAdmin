@@ -21,6 +21,7 @@ const Support = () => {
     const [page, setPage] = useState(1);
     const [limit] = useState(10);
     const [status, setStatus] = useState('');
+    const [data, setData] = useState();
     const [priority, setPriority] = useState('');
     const [totalPages, setTotalPages] = useState(1);
     const [loading, setLoading] = useState(false);
@@ -38,6 +39,7 @@ const Support = () => {
             if (res.success) {
                 sethistoryData(res?.data?.tickets);
                 setTotalPages(Math.ceil(res?.totalCount / limit) || 1);
+                setData(res?.data)
             }
         } catch (error) {
             console.error('Error fetching ticket history:', error);
@@ -237,7 +239,7 @@ const Support = () => {
                             {/* <img src={profile} alt='profile.png' className='w-13' /> */}
                             <p className="text-md text-green-400 mb-1 items-center align-center justify-center">Total Tickets</p>
                         </div>
-                        <p className="text-2xl font-medium ml-3">23</p>
+                        <p className="text-2xl font-medium ml-3">{data?.totalTickets}</p>
                     </motion.div>
 
                     {/* Open Tickets */}
@@ -252,7 +254,7 @@ const Support = () => {
                             {/* <img src={message} alt='profile.png' className='w-13' /> */}
                             <p className="text-md text-yellow-400 mb-1">Pending Tickets</p>
                         </div>
-                        <p className="text-2xl font-medium ml-3">23</p>
+                        <p className="text-2xl font-medium ml-3">{data?.pending}</p>
                     </motion.div>
 
                     {/* Closed Tickets */}
@@ -268,7 +270,7 @@ const Support = () => {
                                 {/* <img src={phone} alt='profile.png' className='w-13' /> */}
                                 <p className="text-md text-red-400 mb-1">Rejected Tickets</p>
                             </div>
-                            <p className="text-2xl font-medium ml-3">23</p>
+                            <p className="text-2xl font-medium ml-3">{data?.rejected}</p>
                         </div>
                     </motion.div>
                 </div>
