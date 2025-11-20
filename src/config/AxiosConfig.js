@@ -22,3 +22,17 @@ function (config) {
     
   return config;
 });
+
+axiosConfig.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401 && 
+        error.response?.data?.success === false && 
+        error.response?.data?.message === "Invalid token.") {
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      window.location.href = '/signin';
+    }
+    return Promise.reject(error);
+  }
+);

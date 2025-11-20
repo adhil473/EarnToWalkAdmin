@@ -39,17 +39,17 @@ const Overview = () => {
       const stats = [
         { title: "Total Users", value:dashboardData?.totalUsers|| 0, showIcon: false },
         { title: "Active Users", value: dashboardData?.activeUsers, showIcon: false },
-        { title: "System Wallet Balance", value: "1239.00", showIcon: true },
-        { title: "Total Withdraw", value: "1239.00", showIcon: true },
-        { title: "Pending Withdrawals", value:  dashboardData?.earnings?.treeEarnings, showIcon: true },
+        // { title: "System Wallet Balance", value: "1239.00", showIcon: true },
+        { title: "Total Withdraw", value: dashboardData?.totalWithdraw, showIcon: true },
+        { title: "Pending Withdrawals", value:  dashboardData?.pendingWithdrawals, showIcon: true },
         { title: "Total Invest",  value: dashboardData?.totalInvestment, showIcon: true },
         { title: "Total earnings",  value: dashboardData?.totalEarnings, showIcon: true },
-        { title: "Total Referral Commission", value: dashboardData?.earnings?.referralEarnings, showIcon: true },
-        { title: "Total Left", value: dashboardData?.tree?.totalLeftMembers , showIcon: false },
-        { title: "Total Right", value: dashboardData?.tree?.totalRightMembers , showIcon: false },
-        { title: "Today Total Bussiness", value: "1239.00", showIcon: true },
-        { title: "Total Left Bussiness", value: dashboardData?.tree?.leftTotalAmount  , showIcon: true },
-        { title: "Total Right Bussiness", value: dashboardData?.tree?.rightTotalAmount , showIcon: true },
+        { title: "Total Referral Commission", value: dashboardData?.totalReferralCommission, showIcon: true },
+        // { title: "Total Left", value: dashboardData?.tree?.totalLeftMembers , showIcon: false },
+        // { title: "Total Right", value: dashboardData?.tree?.totalRightMembers , showIcon: false },
+        { title: "Today Total Bussiness", value: dashboardData?.todayTotalBusiness, showIcon: true },
+        // { title: "Total Left Bussiness", value: dashboardData?.tree?.leftTotalAmount  , showIcon: true },
+        // { title: "Total Right Bussiness", value: dashboardData?.tree?.rightTotalAmount , showIcon: true },
     ];
     return (
         <div className="bg-black text-white md:p-8 font-inter mt-20 md:ml-2">
