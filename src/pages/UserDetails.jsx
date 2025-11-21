@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
-import { getSingleUsers, getUsersIncomeHistory } from '../api/serviceApi'
+import { getSingleUsers, getUsersIncomeHistory, planPackages, planPurchaseByAdmin } from '../api/serviceApi'
 import profile from '../assets/profile/profile.png'
 import message from '../assets/profile/message.png'
 import phone from '../assets/profile/phone.png'
 import usdt from '../assets/usdt.png'
-
+import { useToast } from '../context/ToastContext'
+import { FaRocket, FaFire, FaBolt, FaCrown, FaGem, FaStar, FaTrophy, FaShieldAlt, FaAtom } from 'react-icons/fa'
 
 const UserDetails = () => {
   const { userId } = useParams()
@@ -18,26 +19,59 @@ const UserDetails = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const [totalRecords, setTotalRecords] = useState(0)
+  const [showModal, setShowModal] = useState(false)
+  const [plans, setPlans] = useState([])
+  const [selectedPlan, setSelectedPlan] = useState('')
+   const { showToast } = useToast()
 
   const formatTime = (time) => {
     if (!time) return ''
     return time
   }
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const res = await getSingleUsers(userId)
-        if (res.success) {
-          setUserData(res.data)
-          setIsActive(res.data.profile.status === 'Active')
-        }
-      } catch (error) {
-        console.error('Error fetching user details:', error)
-      } finally {
-        setLoading(false)
-      }
+  const getPackageIcon = (type) => {
+    const icons = {
+      'SPARK': <FaRocket className="text-orange-500" />,
+      'RISE': <FaFire className="text-red-500" />,
+      'BOOST': <FaBolt className="text-yellow-500" />,
+      'PRIME': <FaCrown className="text-purple-500" />,
+      'ELITE': <FaGem className="text-blue-500" />,
+      'ULTRA': <FaStar className="text-green-500" />,
+      'TITAN': <FaTrophy className="text-amber-500" />,
+      'ROYAL': <FaShieldAlt className="text-pink-500" />,
+      'EMPEROR': <FaAtom className="text-indigo-500" />
     }
+    return icons[type] || <FaRocket className="text-gray-500" />
+  }
+  const fetchallPlans = async () => {
+    try {
+      const res = await planPackages()
+      if (res.success) {
+        setPlans(res.data)
+      }
+    } catch (error) {
+      console.error('Error fetching plan packages:', error)
+    }
+  }
+  useEffect(() => {
+    fetchallPlans()
+  }, [])
+
+  const fetchUserData = async () => {
+    try {
+      const res = await getSingleUsers(userId)
+      if (res.success) {
+        setUserData(res.data)
+        setIsActive(res.data.profile.status === 'Active')
+      }
+    } catch (error) {
+      console.error('Error fetching user details:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
     fetchUserData()
   }, [userId])
 
@@ -60,6 +94,24 @@ const UserDetails = () => {
     }
     fetchUserincomHistory()
   }, [userId, currentPage])
+
+  const handleSubmitPackagepurchase = async () => {
+    try {
+      const planData = plans.find(p => p.type === selectedPlan)
+      if (!planData) return
+      
+      const res = await planPurchaseByAdmin(userId, planData)
+      if (res.success) {
+        showToast(res.message || `Package ${planData.type} purchased successfully`)
+        setShowModal(false)
+        setSelectedPlan('')
+        fetchUserData()
+        
+      }
+    } catch (error) {
+      console.error('Error purchasing package:', error)
+    }
+  }
 
 
   if (loading) return <div className="min-h-screen bg-black text-white flex items-center justify-center">Loading...</div>
@@ -273,9 +325,18 @@ const UserDetails = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.9, ease: "easeOut" }}
       >
-        <h2 className="text-xl font-semibold">Purchased Packages</h2>
-        <p className="text-sm text-gray-400 mt-1 mb-4">Current Investment Packages And Returns.</p>
-
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4">
+          <div>
+            <h2 className="text-xl font-semibold">Purchased Packages</h2>
+            <p className="text-sm text-gray-400 mt-1">Current Investment Packages And Returns.</p>
+          </div>
+          <button
+            onClick={() => setShowModal(true)}
+            className="bg-[#0d9c44ff] hover:bg-[#0b8a3c] text-white px-4 py-2 sm:py-2 rounded-lg text-sm font-medium transition-colors w-full sm:w-auto"
+          >
+            Add Package Manually
+          </button>
+        </div>
         <div className="space-y-4">
           {userData.packages && userData.packages.length > 0 ? (
             userData.packages.map((pkg, index) => (
@@ -426,6 +487,69 @@ const UserDetails = () => {
           </div>
         )}
       </motion.div>
+
+      {/* Add Package Modal */}
+      {showModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-[#1a1a1a] rounded-2xl p-4 sm:p-6 w-full max-w-sm sm:max-w-md mx-auto max-h-[90vh] flex flex-col">
+            <div className="flex justify-between items-center mb-4 sm:mb-6">
+              <h3 className="text-lg sm:text-xl font-semibold text-white">Select Package</h3>
+              <button
+                onClick={() => setShowModal(false)}
+                className="text-gray-400 hover:text-white text-xl sm:text-2xl"
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="space-y-2 sm:space-y-3 mb-4 sm:mb-6 overflow-y-auto flex-1">
+              {plans.map((plan, index) => {
+                return (
+                  <div
+                    key={plan.type}
+                    onClick={() => setSelectedPlan(plan.type)}
+                    className={`flex items-center justify-between p-3 sm:p-4 rounded-xl cursor-pointer transition-all ${
+                      selectedPlan === plan.type
+                        ? 'bg-[#0d9c44ff] bg-opacity-20 border border-[#0d9c44ff]'
+                        : 'bg-[#2a2a2a] hover:bg-[#333333] border border-transparent'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2 sm:gap-3">
+                      <div className="text-xl sm:text-2xl">
+                        {getPackageIcon(plan.type)}
+                      </div>
+                      <div>
+                        <p className="text-white font-medium text-sm sm:text-base">{plan.type}</p>
+                        <p className="text-gray-400 text-xs sm:text-sm">{plan.currency}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1 sm:gap-2">
+                      <img src={usdt} alt="USDT" className="w-4 h-4 sm:w-5 sm:h-5" />
+                      <p className="text-white font-semibold text-sm sm:text-base">{plan.amount.toLocaleString()}</p>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button
+                onClick={() => setShowModal(false)}
+                className="flex-1 bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 sm:py-3 rounded-xl transition-colors font-medium text-sm sm:text-base"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSubmitPackagepurchase}
+                disabled={!selectedPlan}
+                className="flex-1 bg-[#0d9c44ff] hover:bg-[#0b8a3c] disabled:bg-gray-600 disabled:cursor-not-allowed text-white px-4 py-2 sm:py-3 rounded-xl transition-colors font-medium text-sm sm:text-base"
+              >
+                Add Package
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

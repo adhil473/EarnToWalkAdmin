@@ -237,11 +237,11 @@ export const getTicketDetails = async (id) => {
     }
 }
 
-export const updateTicketStatus = async (id,status) => {
+export const updateTicketStatus = async (id, status) => {
     try {
         const res = await axiosConfig.patch(`admin/tickets/${id}/status`,
             {
-                "status": status ,
+                "status": status,
                 "adminReply": "We are looking into your issue"
             }
         );
@@ -290,3 +290,19 @@ export const withdrawAllAccept = async () => {
         return error?.response?.data || { message: error.message };
     }
 };
+
+export const planPurchaseByAdmin = async (id, plan) => {
+    try {
+        const res = await axiosConfig.post(`admin/users/${id}/activate-package`,
+            {
+                "packageType": plan.type,
+                "packageAmount": plan.amount,
+                "reason": "Payment completed but package not activated due to network issue",
+                "transactionHash": plan?.transactionHash
+            }
+        );
+        return res.data;
+    } catch (error) {
+        return error?.response?.data || error.message
+    }
+}
