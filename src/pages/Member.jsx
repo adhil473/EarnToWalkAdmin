@@ -20,8 +20,8 @@ const Member = () => {
       const res = await getUsers(page, limit, search,status);
       if (res.success) {
         setUsersData(res.data.users);
-        setTotalPages(res.data.totalPages || 1);
-        setTotalUsers(res.data.totalUsers || 0);
+        setTotalPages(res.data.pagination.totalPages || 1);
+        setTotalUsers(res.data.pagination.total || 0);
       }
     } catch (error) {
       console.error('Error fetching users:', error);
