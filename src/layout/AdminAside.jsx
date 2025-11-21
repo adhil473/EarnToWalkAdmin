@@ -108,7 +108,7 @@ const AdminAside = ({ open, setOpen }) => {
               className="flex items-center text-xl font-bold cursor-pointer"
             >
               <img src={logo} className="w-12" />
-              <p className={`text-xl ml-2 ${!open && "hidden"}`}>PROTOCOL</p>
+              <p className={`text-xl ml-2 ${!open && "hidden"}`}>AXTON</p>
             </button>
           </div>
 
