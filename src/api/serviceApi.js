@@ -306,3 +306,13 @@ export const planPurchaseByAdmin = async (id, plan) => {
         return error?.response?.data || error.message
     }
 }
+
+export const pendingWithdrawal = async () => {
+    try {
+        const res = await axiosConfig.get(`admin/withdrawals/pending`);
+        return res.data;
+    } catch (error) {
+        console.error('Transaction fetch error:', error);
+        return error?.response?.data || { message: error.message };
+    }
+};

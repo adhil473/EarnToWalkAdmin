@@ -1,166 +1,222 @@
 
-import React, { useEffect, useState } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { transactions } from '../api/serviceApi';
-import tether from '../assets/withdraw/tether.png'
-
+import { pendingWithdrawal, withdrawAllAccept, withdrawHistory } from '../api/serviceApi';
+import tether from '../assets/usdt.png'
+import { useToast } from '../context/ToastContext'
 function DepositLog() {
-   const [historyData, setData] = useState([])
-   const [pagination, setPagination] = useState(null)
-   const [currentPage, setCurrentPage] = useState(1)
- 
-   const handlegetTransactions = async (page = 1) => {
-     try {
-       const res = await transactions(page);
-       if (res?.success) {
-         setData(res?.data?.transactions)
-         setPagination(res?.data?.pagination)
-         console.log(res.data);
-       }
-     } catch (error) {
-       console.log(error);
-     }
-   }
- 
-   const truncateDescription = (text, maxLength = 50) => {
-     return text.length > maxLength ? text.substring(0, maxLength) + '...' : text
-   }
- 
-   const truncateDescriptionMobile = (text, maxLength = 30) => {
-     return text.length > maxLength ? text.substring(0, maxLength) + '...' : text
-   }
- 
-   useEffect(() => {
-     handlegetTransactions(currentPage);
-   }, [currentPage])
-   return (
-     <div className='p-4 md:p-8 space-y-6 md:space-y-10 mt-16 md:mt-20 md:ml-2'>
-       <div>
-         <h3 className="text-white text-lg md:text-xl font-semibold mb-4">Deposit Log</h3>
-       </div>
-       
-       {/* Desktop Table Layout */}
-       <div className="hidden md:block overflow-x-auto border border-[#1f2e2e] rounded-lg">
-         <div className="min-w-[600px]">
-           {/* Table Header */}
-           <div className="grid grid-cols-5 bg-[#050D0F] text-gray-300 text-sm font-medium py-3 px-5 border-b border-[#1f2e2e]">
-             <p>Date & Time</p>
-             <p>Description</p>  
-             <p>Details</p>
-             <p>Amount</p>
-             <p>Status</p>
-           </div>
- 
-           {/* Table Rows */}
-           <AnimatePresence>
-             {historyData.map((item, index) => (
-               <motion.div
-                 key={index}
-                 initial={{ opacity: 0, y: 30 }}
-                 animate={{ opacity: 1, y: 0 }}
-                 transition={{ 
-                   duration: 0.6, 
-                   ease: "easeOut",
-                   delay: index * 0.1 
-                 }}
-                 whileHover={{ y: -2, transition: { duration: 0.2 } }}
-                 className="grid grid-cols-5 items-center bg-[#050D0F] text-sm text-gray-300 px-5 py-3 border-b border-[#1f2e2e] hover:bg-[#112828] transition"
-               >
-                 <div>
-                   <p>{new Date(item.createdAt).toLocaleDateString()}</p>
-                   <p className="text-xs text-gray-500">{new Date(item.createdAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}</p>
-                 </div>
-                 <p title={item.description}>{truncateDescription(item.description)}</p>
-                 <p>{item.type}</p>
-                 <div className='  flex items-center gap-2 text-[#0d9c44ff] font-semibold'>
-                   <img src={tether} alt='tether' className='w-4' />{item.amount}
-                 </div>
-                 <div className="inline-block px-3 py-1 bg-[#0e1a0e] text-[#0d9c44ff] border border-[#0d9c44ff] rounded-lg font-medium text-sm w-fit">
-                   {item.status}
-                 </div>
-               </motion.div>
-             ))}
-           </AnimatePresence>
-         </div>
-       </div>
-       
-       {/* Mobile Card Layout */}
-       <div className="md:hidden space-y-3">
-         <AnimatePresence>
-           {historyData.map((item, index) => (
-             <motion.div
-               key={index}
-               initial={{ opacity: 0, y: 20 }}
-               animate={{ opacity: 1, y: 0 }}
-               transition={{ 
-                 duration: 0.4, 
-                 ease: "easeOut",
-                 delay: index * 0.05 
-               }}
-               className="bg-[#050D0F] border border-[#1f2e2e] rounded-lg p-4 space-y-3"
-             >
-               {/* Header Row */}
-               <div className="flex justify-between items-start">
-                 <div className="flex-1">
-                   <p className="text-gray-400 text-xs mb-1">Date & Time</p>
-                   <p className="text-white text-sm">{new Date(item.createdAt).toLocaleDateString()}</p>
-                   <p className="text-gray-500 text-xs">{new Date(item.createdAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}</p>
-                 </div>
-                 <div className="px-3 py-1 bg-[#0e1a0e] border border-[#0d9c44ff] rounded-full">
-                   <span className="text-[#0d9c44ff] text-xs font-medium">{item.status}</span>
-                 </div>
-               </div>
-               
-               {/* Description */}
-               <div>
-                 <p className="text-gray-400 text-xs mb-1">Description</p>
-                 <p className="text-gray-300 text-sm" title={item.description}>
-                   {truncateDescriptionMobile(item.description)}
-                 </p>
-               </div>
-               
-               {/* Bottom Row */}
-               <div className="flex justify-between items-center pt-2 border-t border-[#1f2e2e]">
-                 <div>
-                   <p className="text-gray-400 text-xs">Type</p>
-                   <p className="text-gray-300 text-sm">{item.type}</p>
-                 </div>
-                 <div className="text-right">
-                   <p className="text-gray-400 text-xs">Amount</p>
-                   <p className=" flex items-center gap-2 text-[#0d9c44ff] font-semibold text-lg"><img src={tether} alt='tether' className='w-4' />{item.amount}</p>
-                 </div>
-               </div>
-             </motion.div>
-           ))}
-         </AnimatePresence>
-       </div>
- 
-       {/* Pagination */}
-       {pagination && pagination.totalPages > 1 && (
-         <div className="flex flex-col md:flex-row justify-center items-center space-y-3 md:space-y-0 md:space-x-4 mt-6">
-           <span className="text-gray-400 text-sm order-2 md:order-none">
-             Page {pagination.currentPage} of {pagination.totalPages}
-           </span>
-           <div className="flex space-x-3 w-full md:w-auto order-1 md:order-none">
-             <button
-               onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-               disabled={!pagination.hasPrev}
-               className="flex-1 md:flex-none md:px-4 py-3 md:py-2 bg-[#1f2e2e] text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#2a3f3f] transition text-sm font-medium"
-             >
-               Previous
-             </button>
-             <button
-               onClick={() => setCurrentPage(prev => Math.min(prev + 1, pagination.totalPages))}
-               disabled={!pagination.hasNext}
-               className="flex-1 md:flex-none md:px-4 py-3 md:py-2 bg-[#1f2e2e] text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#2a3f3f] transition text-sm font-medium"
-             >
-               Next
-             </button>
-           </div>
-         </div>
-       )}
-     </div>
-   )
- }
+  const [showConfirmModal, setShowConfirmModal] = useState(false)
+  const [status, setStatus] = useState([])
+  const [historyData, setHistoryData] = useState([])
+  const [pagination, setPagination] = useState(null)
+  const { showToast } = useToast()
+  const handlegetHistory = async (page = 1) => {
+    try {
+      const res = await withdrawHistory(page);
+      setStatus(res.data?.pendingStats)
+
+    } catch (error) {
+      console.error('Failed to fetch withdrawal history:', error)
+    }
+  }
+
+  const handlePageChange = (page) => {
+    handlegetHistory(page)
+  }
+  const getpendingwithdrawals = async () => {
+    try {
+      const res = await pendingWithdrawal()
+      if (res.success) {
+        setHistoryData(res.data.withdrawals)
+        setPagination(res.data.pagination)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  useEffect(() => {
+    handlegetHistory()
+    getpendingwithdrawals()
+  }, [])
+
+
+  const handlewithdrawAll = async () => {
+    try {
+      const res = await withdrawAllAccept();
+      if (res.success) {
+          showToast(res.message )
+      }
+    } catch (error) {
+      console.log(error)
+    }
+    setShowConfirmModal(false)
+  }
+  return (
+    <div className="min-h-screen bg-black text-white px-4 md:px-20 py-6 md:py-12 space-y-10 mt-16">
+      <h3 className='text-xl font-semibold'>Withdraw</h3>
+      <div className=" flex justify-end ">
+        <button
+          className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-6 md:px-8 py-3 rounded-full font-medium transition-all duration-200 hover:bg-white/20 hover:border-white/30 w-full md:w-auto self-end"
+          onClick={() => setShowConfirmModal(true)}
+        >
+          Accept All
+        </button>
+      </div>
+      <div className=" flex flex-col md:flex-row justify-between items-start gap-4">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut", delay: 0.1 }}
+          whileHover={{ y: -5, transition: { duration: 0.2 } }}
+          className="bg-[#050D0F] border border-[#1f2e2e] p-4 rounded-xl min-h-[110px] md:min-h-[142px] w-full md:flex-1 md:max-w-xs"
+        >
+          <div className='flex items-center'>
+            <p className="text-md text-green-400 mb-1">Total Pending Amount</p>
+          </div>
+          <div className="flex items-center mt-2">
+            <img src={tether} alt='tether' className='w-8 mr-2' />
+            <p className="text-2xl font-medium">{status.totalPendingAmount}</p>
+          </div>
+        </motion.div>
+
+      </div>
+
+      {/* Pending Withdrawals Table */}
+      <div className="overflow-x-auto border border-[#1f2e2e] rounded-lg">
+        <div className="min-w-[1200px]">
+          {/* Table Header */}
+          <div className="grid grid-cols-9 bg-[#050D0F] text-gray-300 text-sm font-medium py-3 px-5 border-b border-[#1f2e2e]">
+            <p>Date & Time</p>
+            <p>User ID</p>
+            <p>Name</p>
+            <p>Email</p>
+            <p>Amount</p>
+            <p>Wallet Address</p>
+            <p>Transaction Hash</p>
+            <p>Block Number</p>
+            <p>Status</p>
+          </div>
+
+          {/* Table Rows */}
+          <AnimatePresence>
+            {historyData.length === 0 ? (
+              <div className="flex items-center justify-center py-12 text-gray-400">
+                <p>No records available</p>
+              </div>
+            ) : (
+              historyData.map((item, index) => {
+                const copyToClipboard = (text) => {
+                  navigator.clipboard.writeText(text)
+                }
+
+                return (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{
+                      duration: 0.6,
+                      ease: "easeOut",
+                      delay: index * 0.1
+                    }}
+                    whileHover={{ y: -2, transition: { duration: 0.2 } }}
+                    className="grid grid-cols-9 items-center bg-[#050D0F] text-sm text-gray-300 px-5 py-3 border-b border-[#1f2e2e] hover:bg-[#112828] transition"
+                  >
+                    <div>
+                      <p>{new Date(item.createdAt).toLocaleDateString()}</p>
+                      <p className="text-xs text-gray-500">{new Date(item.createdAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}</p>
+                    </div>
+                    <div
+                      className="cursor-pointer hover:text-[#00d1b2] transition-colors"
+                      onClick={() => copyToClipboard(item.userId._id || item._id)}
+                      title="Click to copy"
+                    >
+                      {(item.userId._id || item._id).slice(0, 8)}...
+                    </div>
+                    <div>{item.userId.name}</div>
+                    <div
+                      className="cursor-pointer hover:text-[#00d1b2] transition-colors truncate"
+                      onClick={() => copyToClipboard(item.userId.email)}
+                      title={item.userId.email}
+                    >
+                      {item.userId.email.length > 20 ? `${item.userId.email.slice(0, 20)}...` : item.userId.email}
+                    </div>
+                    <div className="flex items-center gap-2 text-[#00c896] font-semibold">
+                      <img src={tether} alt='tether' className='w-4' />
+                      {item.amount}
+                    </div>
+                    <div
+                      className="cursor-pointer hover:text-[#00d1b2] transition-colors"
+                      onClick={() => copyToClipboard(item.userId.walletAddress)}
+                      title="Click to copy"
+                    >
+                      {item.userId.walletAddress ?
+                        `${item.userId.walletAddress.slice(0, 6)}...${item.userId.walletAddress.slice(-4)}`
+                        : 'N/A'
+                      }
+                    </div>
+                    <div className="text-gray-500">N/A</div>
+                    <div className="text-gray-500">N/A</div>
+                    <div>
+                      <div style={{
+                        display: 'inline-block',
+                        padding: '5px 12px',
+                        backgroundColor: item.status === 'FAILED' ? '#1a0e0e' : '#0e1a0e',
+                        color: item.status === 'FAILED' ? '#dc2626' : '#0d9c44ff',
+                        border: item.status === 'FAILED' ? '1px solid #dc2626' : '1px solid #0d9c44ff',
+                        borderRadius: '10px',
+                        fontWeight: 500,
+                        fontSize: '14px',
+                        width: 'fit-content'
+                      }}>
+                        {item.status}
+                      </div>
+                    </div>
+                  </motion.div>
+                )
+              })
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
+
+      {/* Confirmation Modal */}
+      <AnimatePresence>
+        {showConfirmModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-[#050D0F] border border-[#1f2e2e] rounded-xl p-6 max-w-sm w-full"
+            >
+              <h3 className="text-white text-lg font-semibold mb-4">Confirm Action</h3>
+              <p className="text-gray-300 mb-6">Are you sure you want to accept all withdrawals?</p>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowConfirmModal(false)}
+                  className="flex-1 px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors"
+                >
+                  No
+                </button>
+                <button
+                  onClick={handlewithdrawAll}
+                  className="flex-1 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+                >
+                  Yes
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
 
 export default DepositLog

@@ -48,12 +48,12 @@ function WithdrawLog() {
       <div>
         <h3 className="text-white text-xl font-semibold mb-4">Withdraw Log</h3>
         <div className="flex justify-end mb-4">
-          <button 
+          {/* <button 
             className="bg-[#00d1b2] hover:bg-[#00b89f] text-white px-6 py-2 rounded-lg font-semibold transition-colors duration-200"
             onClick={() => setShowConfirmModal(true)}
           >
             Accept All
-          </button>
+          </button> */}
         </div>
       </div>
       {/* Table Section */}

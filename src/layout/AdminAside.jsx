@@ -43,7 +43,7 @@ const AdminAside = ({ open, setOpen }) => {
       iconSelected: reportsSelected,
       submenu: [
         // { name: "Transaction Log", redirect_url: "/reports/transaction-log" },
-        // { name: "Deposit Log", redirect_url: "/reports/deposit-log" },
+        { name: "Withdraw", redirect_url: "/reports/deposit-log" },
         { name: "Withdraw Log", redirect_url: "/reports/withdraw-log" },
         { name: "Invest Log", redirect_url: "/reports/invest-log" },
         // { name: "Referral Commissions", redirect_url: "/reports/referral-commissions" },
