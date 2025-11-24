@@ -178,13 +178,13 @@ function InvestLog() {
                   <div>
                     <p>{item.userId?.name || 'N/A'}</p>
                   </div>
-                  <div>
-                    <p title={item.userId?.email}>
+                  <div className="truncate">
+                    <p title={item.userId?.email} className="truncate">
                       {item.userId?.email || 'N/A'}
                     </p>
                   </div>
-                  <div>
-                    <p>{item.userId?.ownReferalId || 'N/A'}</p>
+                  <div className="truncate">
+                    <p className="truncate">{item.userId?.ownReferalId || 'N/A'}</p>
                   </div>
                   <div>
                     <p>{item.calculationDetails?.packageType || 'N/A'}</p>
