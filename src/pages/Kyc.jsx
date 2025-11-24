@@ -191,7 +191,7 @@ const Kyc = () => {
                   className="grid grid-cols-8 items-center bg-[#050D0F] text-sm text-gray-300 px-5 py-3 border-b border-[#1f2e2e] hover:bg-[#112828] transition"
                 >
                   <p>{item.user?.name || 'N/A'}</p>
-                  <p>{item.user?.email || 'N/A'}</p>
+                  <p className="break-words overflow-hidden text-ellipsis max-w-[150px]" title={item.user?.email}>{item.user?.email || 'N/A'}</p>
                   <p className="capitalize">{item.documentType?.replace('_', ' ')}</p>
                   <p>{item.documentNumber}</p>
                   <p>{new Date(item.submittedAt).toLocaleDateString()}</p>
