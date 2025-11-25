@@ -13,7 +13,7 @@ const Header = ({ open, setOpen }) => {
           try {
             const response = await adminProfile()
             console.log(response)
-            setUserData(response.data)
+            setUserData(response.data.admin)
           } catch (error) {
          console.error('failed to fetch profile');  
           }
@@ -36,7 +36,7 @@ const Header = ({ open, setOpen }) => {
             <span className='text-[#00bcd4]'>ID</span>
             <span className='text-[#D1D5DB]'>: 0x3e2...f2d</span>
           </div> */}
-           <ConnectWeb3/>
+           {/* <ConnectWeb3/> */}
           <button onClick={toggleSidebar} className="text-white">
             <HiMenuAlt3 size={24} />
           </button>
@@ -47,7 +47,7 @@ const Header = ({ open, setOpen }) => {
           <span className='text-[#00bcd4]'>Wallet ID</span>
           <span className='text-[#D1D5DB]'>: 0x3e2...f2d</span>
         </div> */}
-        <ConnectWeb3/>
+        {/* <ConnectWeb3/> */}
         <div className='border border-[#1f2e2e] px-3 py-1.5 rounded-md font-semibold text-[#D1D5DB] text-sm flex items-center'>
           <span className='border border-[#050D0F] rounded-full text-[10px] px-1.5 py-1 mr-2 text-white bg-[#1a3f3f]'>{userData?.name?.slice(0, 2)}</span>
          {userData?.name}
