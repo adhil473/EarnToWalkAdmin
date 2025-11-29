@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
-import { getSingleUsers, getUsersIncomeHistory, planPackages, planPurchaseByAdmin } from '../api/serviceApi'
+import { getSingleUsers, getUsersIncomeHistory, planPackages, planPurchaseByAdmin, updateUserPassword } from '../api/serviceApi'
 import profile from '../assets/profile/profile.png'
 import message from '../assets/profile/message.png'
 import phone from '../assets/profile/phone.png'
+import edit from '../assets/profile/edit.png'
 import usdt from '../assets/usdt.png'
 import { useToast } from '../context/ToastContext'
-import { FaRocket, FaFire, FaBolt, FaCrown, FaGem, FaStar, FaTrophy, FaShieldAlt, FaAtom } from 'react-icons/fa'
+import { FaRocket, FaFire, FaBolt, FaCrown, FaGem, FaStar, FaTrophy, FaShieldAlt, FaAtom, FaEye, FaEyeSlash } from 'react-icons/fa'
 
 const UserDetails = () => {
   const { userId } = useParams()
@@ -22,7 +23,13 @@ const UserDetails = () => {
   const [showModal, setShowModal] = useState(false)
   const [plans, setPlans] = useState([])
   const [selectedPlan, setSelectedPlan] = useState('')
-   const { showToast } = useToast()
+  const { showToast } = useToast()
+  const [showEditModal, setShowEditModal] = useState(false)
+  const [newPassword, setNewPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [editLoading, setEditLoading] = useState(false)
+  const [showNewPass, setShowNewPass] = useState(false)
+  const [showConfirmPass, setShowConfirmPass] = useState(false)
 
   const formatTime = (time) => {
     if (!time) return ''
@@ -99,17 +106,56 @@ const UserDetails = () => {
     try {
       const planData = plans.find(p => p.type === selectedPlan)
       if (!planData) return
-      
+
       const res = await planPurchaseByAdmin(userId, planData)
       if (res.success) {
         showToast(res.message || `Package ${planData.type} purchased successfully`)
         setShowModal(false)
         setSelectedPlan('')
         fetchUserData()
-        
+
       }
     } catch (error) {
       console.error('Error purchasing package:', error)
+    }
+  }
+
+  const validatePassword = () => {
+    if (!newPassword || newPassword.length < 6) {
+      showToast('Password must be at least 6 characters')
+      return false
+    }
+    if (newPassword !== confirmPassword) {
+      showToast('Passwords do not match')
+      return false
+    }
+    return true
+  }
+  const handleSubmitEditPassword = async () => {
+    if (!validatePassword()) return
+
+    try {
+      setEditLoading(true)
+
+
+      const res = await updateUserPassword(userId, newPassword)
+
+      if (res && res.success) {
+        showToast(res.message || 'Password updated successfully')
+        setShowEditModal(false)
+        setNewPassword('')
+        setConfirmPassword('')
+        // optionally refetch user data if needed:
+        fetchUserData()
+      } else {
+        // handle api error message if present
+        showToast(res?.message || 'Failed to update password')
+      }
+    } catch (error) {
+      console.error('Error updating password:', error)
+      showToast('Something went wrong. Try again.')
+    } finally {
+      setEditLoading(false)
     }
   }
 
@@ -158,6 +204,7 @@ const UserDetails = () => {
               onClick={() => navigate(`/treeStructure/${userId}`)}
               className="animated-tree-button"
             >
+
               <span>
                 {"View Tree".split('').map((letter, index) => (
                   <b key={index} style={{ animationDelay: `${index * 0.05}s` }}>
@@ -165,6 +212,11 @@ const UserDetails = () => {
                   </b>
                 ))}
               </span>
+            </button>
+            <button
+              onClick={() => setShowEditModal(true)}
+              className="text-white font-semibold text-sm px-4.5 py-2.5 rounded-lg transition-all duration-300 hover:scale-95 whitespace-nowrap flex items-center gap-2 border border-[#4B5563]">
+              <img src={edit} alt='edit' className='w-4' />
             </button>
           </div>
         </div>
@@ -508,11 +560,10 @@ const UserDetails = () => {
                   <div
                     key={plan.type}
                     onClick={() => setSelectedPlan(plan.type)}
-                    className={`flex items-center justify-between p-3 sm:p-4 rounded-xl cursor-pointer transition-all ${
-                      selectedPlan === plan.type
-                        ? 'bg-[#0d9c44ff] bg-opacity-20 border border-[#0d9c44ff]'
-                        : 'bg-[#2a2a2a] hover:bg-[#333333] border border-transparent'
-                    }`}
+                    className={`flex items-center justify-between p-3 sm:p-4 rounded-xl cursor-pointer transition-all ${selectedPlan === plan.type
+                      ? 'bg-[#0d9c44ff] bg-opacity-20 border border-[#0d9c44ff]'
+                      : 'bg-[#2a2a2a] hover:bg-[#333333] border border-transparent'
+                      }`}
                   >
                     <div className="flex items-center gap-2 sm:gap-3">
                       <div className="text-xl sm:text-2xl">
@@ -550,7 +601,88 @@ const UserDetails = () => {
           </div>
         </div>
       )}
+      {/* user password Modal */}
+      {showEditModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-[#1a1a1a] rounded-2xl p-4 sm:p-6 w-full max-w-sm mx-auto">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg sm:text-xl font-semibold text-white">Edit Password</h3>
+              <button
+                onClick={() => {
+                  setShowEditModal(false)
+                  setNewPassword('')
+                  setConfirmPassword('')
+                }}
+                className="text-gray-400 hover:text-white text-xl sm:text-2xl"
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="space-y-3 mb-4">
+              <label className="text-sm text-gray-300">New Password</label>
+              <div className="relative">
+                <input
+                  type={showNewPass ? "text" : "password"}
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  className="w-full bg-[#111] border border-[#2a2a2a] rounded px-3 py-2 text-white outline-none"
+                  placeholder="Enter new password"
+                />
+                <span
+                  onClick={() => setShowNewPass(!showNewPass)}
+                  className="absolute right-3 top-3 cursor-pointer text-gray-400 hover:text-white"
+                >
+                  {showNewPass ? <FaEyeSlash /> : <FaEye />}
+                </span>
+              </div>
+
+
+              <label className="text-sm text-gray-300">Confirm Password</label>
+              <div className="relative">
+                <input
+                  type={showConfirmPass ? "text" : "password"}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="w-full bg-[#111] border border-[#2a2a2a] rounded px-3 py-2 text-white outline-none"
+                  placeholder="Confirm new password"
+                />
+                <span
+                  onClick={() => setShowConfirmPass(!showConfirmPass)}
+                  className="absolute right-3 top-3 cursor-pointer text-gray-400 hover:text-white"
+                >
+                  {showConfirmPass ? <FaEyeSlash /> : <FaEye />}
+                </span>
+              </div>
+
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  setShowEditModal(false)
+                  setNewPassword('')
+                  setConfirmPassword('')
+                }}
+                className="flex-1 bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-xl"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={handleSubmitEditPassword}
+                disabled={editLoading}
+                className="flex-1 bg-[#0d9c44ff] hover:bg-[#0b8a3c] disabled:bg-gray-600 disabled:cursor-not-allowed text-white px-4 py-2 rounded-xl"
+              >
+                {editLoading ? 'Saving...' : 'Save Password'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
+
   )
 }
 

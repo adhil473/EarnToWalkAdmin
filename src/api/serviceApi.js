@@ -316,3 +316,16 @@ export const pendingWithdrawal = async () => {
         return error?.response?.data || { message: error.message };
     }
 };
+
+export const updateUserPassword  = async (id,password) => {
+    try {
+        const res = await axiosConfig.patch(`admin/users/${id}/password`,
+            {
+                "newPassword": password,
+            }
+        );
+        return res.data;
+    } catch (error) {
+        return error?.response?.data || error.message
+    }
+}
