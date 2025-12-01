@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
-import { getSingleUsers, getUsersIncomeHistory, planPackages, planPurchaseByAdmin, updateUserPassword } from '../api/serviceApi'
+import { getSingleUsers, getUsersIncomeHistory, planPackages, planPurchaseByAdmin, updateUserPassword, updateUserProfile } from '../api/serviceApi'
 import profile from '../assets/profile/profile.png'
 import message from '../assets/profile/message.png'
 import phone from '../assets/profile/phone.png'
@@ -30,6 +30,9 @@ const UserDetails = () => {
   const [editLoading, setEditLoading] = useState(false)
   const [showNewPass, setShowNewPass] = useState(false)
   const [showConfirmPass, setShowConfirmPass] = useState(false)
+  const [showProfileModal, setShowProfileModal] = useState(false)
+  const [profileData, setProfileData] = useState({ name: '', email: '', phone: '' })
+  const [profileLoading, setProfileLoading] = useState(false)
 
   const formatTime = (time) => {
     if (!time) return ''
@@ -159,6 +162,40 @@ const UserDetails = () => {
     }
   }
 
+  const handleEditProfile = () => {
+    setProfileData({
+      name: userData.profile.name,
+      email: userData.profile.email,
+      phone: userData.profile.phone
+    })
+    setShowProfileModal(true)
+  }
+
+  const handleSubmitEditProfile = async () => {
+    if (!profileData.name || !profileData.email || !profileData.phone) {
+      showToast('All fields are required')
+      return
+    }
+
+    try {
+      setProfileLoading(true)
+      const res = await updateUserProfile(userId, profileData)
+
+      if (res && res.success) {
+        showToast(res.message || 'Profile updated successfully')
+        setShowProfileModal(false)
+        fetchUserData()
+      } else {
+        showToast(res?.message || 'Failed to update profile')
+      }
+    } catch (error) {
+      console.error('Error updating profile:', error)
+      showToast('Something went wrong. Try again.')
+    } finally {
+      setProfileLoading(false)
+    }
+  }
+
 
   if (loading) return <div className="min-h-screen bg-black text-white flex items-center justify-center">Loading...</div>
   if (!userData) return <div className="min-h-screen bg-black text-white flex items-center justify-center">User not found</div>
@@ -215,6 +252,11 @@ const UserDetails = () => {
             </button>
             <button
               onClick={() => setShowEditModal(true)}
+              className="text-white font-semibold text-sm px-4 py-2.5 rounded-lg transition-all duration-300 hover:scale-95 whitespace-nowrap flex items-center gap-2 border border-[#4B5563]">
+              Change Password
+            </button>
+            <button
+              onClick={handleEditProfile}
               className="text-white font-semibold text-sm px-4.5 py-2.5 rounded-lg transition-all duration-300 hover:scale-95 whitespace-nowrap flex items-center gap-2 border border-[#4B5563]">
               <img src={edit} alt='edit' className='w-4' />
             </button>
@@ -675,6 +717,81 @@ const UserDetails = () => {
                 className="flex-1 bg-[#0d9c44ff] hover:bg-[#0b8a3c] disabled:bg-gray-600 disabled:cursor-not-allowed text-white px-4 py-2 rounded-xl"
               >
                 {editLoading ? 'Saving...' : 'Save Password'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Profile Modal */}
+      {showProfileModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-[#1a1a1a] rounded-2xl p-4 sm:p-6 w-full max-w-sm mx-auto">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg sm:text-xl font-semibold text-white">Edit Profile</h3>
+              <button
+                onClick={() => {
+                  setShowProfileModal(false)
+                  setProfileData({ name: '', email: '', phone: '' })
+                }}
+                className="text-gray-400 hover:text-white text-xl sm:text-2xl"
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="space-y-3 mb-4">
+              <div>
+                <label className="text-sm text-gray-300">Name</label>
+                <input
+                  type="text"
+                  value={profileData.name}
+                  onChange={(e) => setProfileData({...profileData, name: e.target.value})}
+                  className="w-full bg-[#111] border border-[#2a2a2a] rounded px-3 py-2 text-white outline-none mt-1"
+                  placeholder="Enter name"
+                />
+              </div>
+
+              <div>
+                <label className="text-sm text-gray-300">Email</label>
+                <input
+                  type="email"
+                  value={profileData.email}
+                  onChange={(e) => setProfileData({...profileData, email: e.target.value})}
+                  className="w-full bg-[#111] border border-[#2a2a2a] rounded px-3 py-2 text-white outline-none mt-1"
+                  placeholder="Enter email"
+                />
+              </div>
+
+              <div>
+                <label className="text-sm text-gray-300">Phone</label>
+                <input
+                  type="tel"
+                  value={profileData.phone}
+                  onChange={(e) => setProfileData({...profileData, phone: e.target.value})}
+                  className="w-full bg-[#111] border border-[#2a2a2a] rounded px-3 py-2 text-white outline-none mt-1"
+                  placeholder="Enter phone number"
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  setShowProfileModal(false)
+                  setProfileData({ name: '', email: '', phone: '' })
+                }}
+                className="flex-1 bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-xl"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={handleSubmitEditProfile}
+                disabled={profileLoading}
+                className="flex-1 bg-[#0d9c44ff] hover:bg-[#0b8a3c] disabled:bg-gray-600 disabled:cursor-not-allowed text-white px-4 py-2 rounded-xl"
+              >
+                {profileLoading ? 'Saving...' : 'Save Profile'}
               </button>
             </div>
           </div>

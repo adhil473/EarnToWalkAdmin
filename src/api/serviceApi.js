@@ -329,3 +329,12 @@ export const updateUserPassword  = async (id,password) => {
         return error?.response?.data || error.message
     }
 }
+
+export const updateUserProfile = async (id, profileData) => {
+    try {
+        const res = await axiosConfig.patch(`admin/users/${id}/profile`, profileData);
+        return res.data;
+    } catch (error) {
+        return error?.response?.data || error.message
+    }
+}
