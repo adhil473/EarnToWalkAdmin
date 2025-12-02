@@ -14,7 +14,7 @@ function DepositLog() {
   const handlegetHistory = async (page = 1) => {
     try {
       const res = await withdrawHistory(page);
-      setStatus(res.data?.pendingStats)
+      
 
     } catch (error) {
       console.error('Failed to fetch withdrawal history:', error)
@@ -29,6 +29,7 @@ function DepositLog() {
       const res = await pendingWithdrawal()
       if (res.success) {
         setHistoryData(res.data.withdrawals)
+        setStatus(res.data)
         setPagination(res.data.pagination)
       }
     } catch (error) {
