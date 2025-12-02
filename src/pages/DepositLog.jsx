@@ -9,6 +9,7 @@ function DepositLog() {
   const [status, setStatus] = useState([])
   const [historyData, setHistoryData] = useState([])
   const [pagination, setPagination] = useState(null)
+  const [isAccepting, setIsAccepting] = useState(false)
   const { showToast } = useToast()
   const handlegetHistory = async (page = 1) => {
     try {
@@ -41,6 +42,9 @@ function DepositLog() {
 
 
   const handlewithdrawAll = async () => {
+    if (isAccepting) return;
+    
+    setIsAccepting(true);
     try {
       const res = await withdrawAllAccept();
       if (res.success) {
@@ -48,8 +52,10 @@ function DepositLog() {
       }
     } catch (error) {
       console.log(error)
+    } finally {
+      setIsAccepting(false);
+      setShowConfirmModal(false)
     }
-    setShowConfirmModal(false)
   }
   return (
     <div className="min-h-screen bg-black text-white px-4 md:px-20 py-6 md:py-12 space-y-10 mt-16">
@@ -206,9 +212,21 @@ function DepositLog() {
                 </button>
                 <button
                   onClick={handlewithdrawAll}
-                  className="flex-1 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+                  disabled={isAccepting}
+                  className={`flex-1 px-4 py-2 text-white rounded-lg transition-colors flex items-center justify-center ${
+                    isAccepting 
+                      ? 'bg-green-400 cursor-not-allowed' 
+                      : 'bg-green-600 hover:bg-green-700'
+                  }`}
                 >
-                  Yes
+                  {isAccepting ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      Processing...
+                    </>
+                  ) : (
+                    'Yes'
+                  )}
                 </button>
               </div>
             </motion.div>
