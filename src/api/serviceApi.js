@@ -338,3 +338,11 @@ export const updateUserProfile = async (id, profileData) => {
         return error?.response?.data || error.message
     }
 }
+export const userVerify = async (id) => {
+    try {
+        const res = await axiosConfig.patch(`admin/users/${id}/verify-email`)
+        return res.data;
+    } catch (error) {
+        return error?.response?.data || { success: false, message: error.message };
+    }
+};
