@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { getUsers, userVerify } from "../api/serviceApi";
-import { Filter, Eye } from "lucide-react";
+import { Filter, Eye, Download } from "lucide-react";
 import { useToast } from "../context/ToastContext";
 
 const Member = () => {
@@ -62,6 +62,64 @@ const Member = () => {
     }
   };
 
+  const exportToPDF = () => {
+    if (!usersData || usersData.length === 0) {
+      showToast("No data to export", "error");
+      return;
+    }
+
+    const printWindow = window.open('', '_blank');
+    const html = `
+      <html>
+        <head>
+          <title>Members List</title>
+          <style>
+            body { font-family: Arial, sans-serif; margin: 20px; }
+            h1 { color: #333; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+            th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+            th { background-color: #1de9a6; color: white; }
+            tr:nth-child(even) { background-color: #f2f2f2; }
+          </style>
+        </head>
+        <body>
+          <h1>Members List</h1>
+          <table>
+            <thead>
+              <tr>
+                <th>Username</th>
+                <th>User ID</th>
+                <th>Wallet Address</th>
+                <th>Sponsor ID</th>
+                <th>Active Package</th>
+                <th>Total Earnings</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${usersData.map(user => `
+                <tr>
+                  <td>${user.name || ''}</td>
+                  <td>${user.userId || ''}</td>
+                  <td>${user.walletAddress ? user.walletAddress.substring(0, 12) + '...' : ''}</td>
+                  <td>${user.sponsorId || ''}</td>
+                  <td>${(user.activePackage || 0)} USDT</td>
+                  <td>${Number(user?.totalEarnings || 0).toFixed(3)} USDT</td>
+                  <td>${user.status || ''}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </body>
+      </html>
+    `;
+    
+    printWindow.document.write(html);
+    printWindow.document.close();
+    printWindow.print();
+    showToast("PDF export initiated", "success");
+  };
+
   return (
     <div className="min-h-screen bg-black text-white px-4 md:px-20 py-6 md:py-2 space-y-10 ">
       <div className="md:p-8 space-y-4 mt-20">
@@ -75,6 +133,11 @@ const Member = () => {
             value={search}
             onChange={handleSearch}
             className="border border-[#1f2e2e] bg-black text-white py-2 px-4 w-full md:w-[30%] rounded focus:border-[#1de9a6] focus:outline-none"
+          />
+          <Download
+            className="w-4 h-4 cursor-pointer hover:text-[#1de9a6] transition"
+            onClick={exportToPDF}
+            title="Export to PDF"
           />
           <div className="relative">
             <Filter
