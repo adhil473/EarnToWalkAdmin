@@ -89,6 +89,7 @@ const Member = () => {
               <tr>
                 <th>Username</th>
                 <th>User ID</th>
+                <th>Phone</th>
                 <th>Wallet Address</th>
                 <th>Sponsor ID</th>
                 <th>Active Package</th>
@@ -101,6 +102,7 @@ const Member = () => {
                 <tr>
                   <td>${user.name || ''}</td>
                   <td>${user.userId || ''}</td>
+                  <td>${user.phone || ''}</td>
                   <td>${user.walletAddress ? user.walletAddress.substring(0, 12) + '...' : ''}</td>
                   <td>${user.sponsorId || ''}</td>
                   <td>${(user.activePackage || 0)} USDT</td>
