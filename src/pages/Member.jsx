@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { getUsers, userVerify } from "../api/serviceApi";
+import { getPdf, getUsers, userVerify } from "../api/serviceApi";
 import { Filter, Eye, Download } from "lucide-react";
 import { useToast } from "../context/ToastContext";
 
@@ -62,65 +62,48 @@ const Member = () => {
     }
   };
 
-  const exportToPDF = () => {
-    if (!usersData || usersData.length === 0) {
-      showToast("No data to export", "error");
-      return;
-    }
+  const downloadPdf = async () => {
+    try {
+      const res = await getPdf();
+      
+      if (res.data?.success && res.data?.data) {
+        const users = res.data.data;
+        const headers = ['Name', 'User ID', 'Email', 'Phone', 'Wallet Address', 'Sponsor ID', 'Active Package', 'Total Earnings', 'Status', 'Registration Date'];
+        const csvContent = [
+          headers.join(','),
+          ...users.map(user => [
+            `"${user.name}"`,
+            user.userId,
+            user.email,
+            user.phone,
+            user.walletAddress,
+            user.sponsorId,
+            user.activePackage,
+            user.totalEarnings,
+            user.status,
+            new Date(user.registrationDate).toLocaleDateString()
+          ].join(','))
+        ].join('\n');
 
-    const printWindow = window.open('', '_blank');
-    const html = `
-      <html>
-        <head>
-          <title>Members List</title>
-          <style>
-            body { font-family: Arial, sans-serif; margin: 20px; }
-            h1 { color: #333; }
-            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-            th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-            th { background-color: #1de9a6; color: white; }
-            tr:nth-child(even) { background-color: #f2f2f2; }
-          </style>
-        </head>
-        <body>
-          <h1>Members List</h1>
-          <table>
-            <thead>
-              <tr>
-                <th>Username</th>
-                <th>User ID</th>
-                <th>Phone</th>
-                <th>Wallet Address</th>
-                <th>Sponsor ID</th>
-                <th>Active Package</th>
-                <th>Total Earnings</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${usersData.map(user => `
-                <tr>
-                  <td>${user.name || ''}</td>
-                  <td>${user.userId || ''}</td>
-                  <td>${user.phone || ''}</td>
-                  <td>${user.walletAddress ? user.walletAddress.substring(0, 12) + '...' : ''}</td>
-                  <td>${user.sponsorId || ''}</td>
-                  <td>${(user.activePackage || 0)} USDT</td>
-                  <td>${Number(user?.totalEarnings || 0).toFixed(3)} USDT</td>
-                  <td>${user.status || ''}</td>
-                </tr>
-              `).join('')}
-            </tbody>
-          </table>
-        </body>
-      </html>
-    `;
-    
-    printWindow.document.write(html);
-    printWindow.document.close();
-    printWindow.print();
-    showToast("PDF export initiated", "success");
+        const blob = new Blob([csvContent], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "users.csv";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+        showToast("Users exported successfully", "success");
+      } else {
+        showToast("No data to export", "error");
+      }
+    } catch (error) {
+      console.log(error);
+      showToast("Failed to export users", "error");
+    }
   };
+
 
   return (
     <div className="min-h-screen bg-black text-white px-4 md:px-20 py-6 md:py-2 space-y-10 ">
@@ -138,7 +121,7 @@ const Member = () => {
           />
           <Download
             className="w-4 h-4 cursor-pointer hover:text-[#1de9a6] transition"
-            onClick={exportToPDF}
+            onClick={downloadPdf}
             title="Export to PDF"
           />
           <div className="relative">
@@ -226,9 +209,9 @@ const Member = () => {
                       {user.walletAddress?.length > 10
                         ? `${user.walletAddress.substring(
                             0,
-                            12
+                            12,
                           )}...${user.walletAddress.substring(
-                            user.walletAddress.length - 0
+                            user.walletAddress.length - 0,
                           )}`
                         : user.walletAddress}
                     </p>
@@ -245,20 +228,20 @@ const Member = () => {
                           user.status === "Active"
                             ? "#0e1a0e"
                             : user.status === "Suspended"
-                            ? "#1a0e0e"
-                            : "#1a1a0e",
+                              ? "#1a0e0e"
+                              : "#1a1a0e",
                         color:
                           user.status === "Active"
                             ? "#0d9c44ff"
                             : user.status === "Suspended"
-                            ? "#dc2626"
-                            : "#f59e0b",
+                              ? "#dc2626"
+                              : "#f59e0b",
                         border: `1px solid ${
                           user.status === "Active"
                             ? "#0d9c44ff"
                             : user.status === "Suspended"
-                            ? "#dc2626"
-                            : "#f59e0b"
+                              ? "#dc2626"
+                              : "#f59e0b"
                         }`,
                         borderRadius: "10px",
                         fontWeight: 500,

@@ -346,3 +346,12 @@ export const userVerify = async (id) => {
         return error?.response?.data || { success: false, message: error.message };
     }
 };
+
+export const getPdf = async () => {
+  try {
+    const res = await axiosConfig.get(`admin/users?export=true`);
+    return res;
+  } catch (error) {
+    return error?.response?.data || { success: false, message: error.message };
+  }
+};
