@@ -180,15 +180,14 @@ export const getUsers = async (page = 1, limit = 10, search, status) => {
     }
 
 }
-export const getSingleUsers = async (id) => {
-    try {
-        const res = await axiosConfig.get(`admin/users/${id}`);
-        return res.data
-    } catch (error) {
-        return error?.response?.data || error.message
-    }
-
-}
+// export const getSingleUsers = async (id) => {
+//     try {
+//         const res = await axiosConfig.get(`admin/users/${id}`);
+//         return res.data;
+//     } catch (error) {
+//         throw error?.response?.data || error;
+//     }
+// };
 
 export const getUsersIncomeHistory = async (id, page = 1, limit = 10) => {
     try {
@@ -355,3 +354,100 @@ export const getPdf = async () => {
     return error?.response?.data || { success: false, message: error.message };
   }
 };
+
+
+// new earn to walk start here all others to remove 
+
+// all challenges get api 
+export const getAllChallenges = async () => {
+    try {
+        const res = await axiosConfig.get('/admin/challenges');
+        return res.data;
+    } catch (error) {
+       console.error('Failed to fetch challenges:', error?.response?.data || error.message);
+       throw error; 
+    }
+}
+
+// all challenges delete api 
+export const deleteChallenge = async (challengeId) => {
+    try {
+         const res = await axiosConfig.delete(`/admin/challenges/${challengeId}`);
+         return res.data;
+    } catch (error) {
+        console.error('Failed to delete challenge:', error?.response?.data || error.message);
+        throw error; 
+     }  
+    }
+
+// update challenge api
+export const updateChallenge = async (challengeId, updatedData) => {
+    try {
+        const res = await axiosConfig.put(`/admin/challenges/${challengeId}`, updatedData);
+        return res.data;
+    } catch (error) {
+        console.error('Failed to update challenge:', error?.response?.data || error.message);
+        throw error;
+    }
+}
+
+// challenge create api 
+export const createChallenge = async (challengeData) => {
+    try {
+        const res = await axiosConfig.post('/admin/challenges', challengeData);
+        return res.data;
+    } catch (error) {
+        console.error('Failed to create challenge:', error?.response?.data || error.message);
+        throw error;
+        
+    }
+}
+
+// challenge get by id api 
+export const getChallengeById = async (challengeId) => {
+    try {
+        const res = await axiosConfig.get(`/admin/challenges/${challengeId}`);
+        return res.data;
+    } catch (error) {
+        console.error('Failed to fetch challenge:', error?.response?.data || error.message);
+        throw error;
+    }
+}
+
+// create and edit challenge image upload api 
+
+export const uploadChallengeImage = async (imageFile) => {
+    const formdata = new FormData();
+    formdata.append('image', imageFile);
+    const res = await axiosConfig.post('/admin/challenges/upload-image',formdata, {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        },
+    });
+    return  res.data;
+}
+
+// members get all users api 
+
+export const getallusers = async () => {
+    try {
+        const res = await axiosConfig.get('/admin/users');
+        return res.data;
+    } catch (error) {
+        console.error('Failed to fetch users:', error?.response?.data || error.message);
+        throw error;
+    }
+}
+
+
+// memebers get by id user details api
+export const getuserById = async (userid)=>{
+    try {
+        const res = await axiosConfig.get(`/admin/users/${userid}`);
+        return res.data;
+    } catch (error) {
+        console.error('Failed to fetch users:', error?.response?.data || error.message);
+        throw error;    
+    }
+    
+}

@@ -15,7 +15,10 @@ import SignUp from '../pages/SignUp';
 import TransactionLog from '../pages/TransactionLog';
 import DepositLog from '../pages/DepositLog';
 import WithdrawLog from '../pages/WithdrawLog';
-import InvestLog from '../pages/InvestLog';
+import Challenge from '../pages/Challenge';
+import CreateChallenge from '../pages/CreateChallenge';
+import EditChallenge from '../pages/EditChallenge';
+import Settings from '../pages/Settings';
 import ReferralCommissions from '../pages/ReferralCommissions';
 import BinaryCommissions from '../pages/BinaryCommissions';
 import StakingReward from '../pages/StakingReward';
@@ -47,7 +50,11 @@ const AppContent = () => {
                       <Route path="reports/transaction-log" element={<TransactionLog/>} />
                       <Route path="reports/deposit-log" element={<DepositLog/>} />
                       <Route path="reports/withdraw-log" element={<WithdrawLog/>} />
-                      <Route path="reports/invest-log" element={<InvestLog/>} />
+                      {/* earnto walk route starts here   */}
+                      <Route path="challenges" element={<Challenge/>} />
+                      <Route path="challenges/create" element={<CreateChallenge/>} />
+                      <Route path="challenges/edit/:challengeId" element={<EditChallenge/>} />
+                      <Route path="settings" element={<Settings/>} />
                       <Route path="reports/referral-commissions" element={<ReferralCommissions/>} />
                       <Route path="reports/binary-commissions" element={<BinaryCommissions/>} />
                       <Route path="reports/staking-reward" element={<StakingReward/>} />

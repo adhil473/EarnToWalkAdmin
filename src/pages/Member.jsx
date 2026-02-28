@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { getPdf, getUsers, userVerify } from "../api/serviceApi";
-import { Filter, Eye, Download } from "lucide-react";
+import { getUsers } from "../api/serviceApi";
+import { Filter, Eye } from "lucide-react";
 import { useToast } from "../context/ToastContext";
 
 const Member = () => {
@@ -15,18 +15,22 @@ const Member = () => {
   const [totalUsers, setTotalUsers] = useState(0);
   const [status, setStatus] = useState("");
   const [showFilter, setShowFilter] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { showToast } = useToast();
 
   const getallmembers = async () => {
     try {
+      setLoading(true);
       const res = await getUsers(page, limit, search, status);
       if (res.success) {
-        setUsersData(res.data.users);
-        setTotalPages(res.data.pagination.totalPages || 1);
-        setTotalUsers(res.data.pagination.total || 0);
+        setUsersData(res.data || []);
+        setTotalUsers(res.total || 0);
+        setTotalPages(Math.ceil((res.total || 0) / limit));
       }
     } catch (error) {
       console.error("Error fetching users:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -45,71 +49,18 @@ const Member = () => {
     setPage(1);
   };
 
-  const handlesingleuser = (id) => {
-    navigate(`/user-details/${id}`);
+  const handlesingleuser = (userid) => {
+    navigate(`/user-details/${userid}`);
   };
-  const handleVerifyuser = async (id) => {
-    try {
-      const res = await userVerify(id);
-      if (res.success) {
-        getallmembers();
-        showToast(res.message || "User verified successfully", "success");
-      } else {
-        showToast(res.message || "Failed to verify user", "error");
-      }
-    } catch (error) {
-      showToast("Failed to verify user", "error");
-    }
-  };
-
-  const downloadPdf = async () => {
-    try {
-      const res = await getPdf();
-      
-      if (res.data?.success && res.data?.data) {
-        const users = res.data.data;
-        const headers = ['Name', 'User ID', 'Email', 'Phone', 'Wallet Address', 'Sponsor ID', 'Active Package', 'Total Earnings', 'Status', 'Registration Date'];
-        const csvContent = [
-          headers.join(','),
-          ...users.map(user => [
-            `"${user.name}"`,
-            user.userId,
-            user.email,
-            user.phone,
-            user.walletAddress,
-            user.sponsorId,
-            user.activePackage,
-            user.totalEarnings,
-            user.status,
-            new Date(user.registrationDate).toLocaleDateString()
-          ].join(','))
-        ].join('\n');
-
-        const blob = new Blob([csvContent], { type: 'text/csv' });
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "users.csv";
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        window.URL.revokeObjectURL(url);
-        showToast("Users exported successfully", "success");
-      } else {
-        showToast("No data to export", "error");
-      }
-    } catch (error) {
-      console.log(error);
-      showToast("Failed to export users", "error");
-    }
-  };
-
 
   return (
     <div className="min-h-screen bg-black text-white px-4 md:px-20 py-6 md:py-2 space-y-10 ">
       <div className="md:p-8 space-y-4 mt-20">
         <div>
-          <h3 className="text-white text-xl font-semibold  pl-2">User List</h3>
+          <h3 className="text-white text-xl font-semibold pl-2">User List</h3>
+          <p className="text-sm text-gray-400 pl-2 mt-1">
+            Total Users: {totalUsers}
+          </p>
         </div>
         <div className="flex w-full justify-end gap-2 items-center">
           <input
@@ -118,11 +69,6 @@ const Member = () => {
             value={search}
             onChange={handleSearch}
             className="border border-[#1f2e2e] bg-black text-white py-2 px-4 w-full md:w-[30%] rounded focus:border-[#1de9a6] focus:outline-none"
-          />
-          <Download
-            className="w-4 h-4 cursor-pointer hover:text-[#1de9a6] transition"
-            onClick={downloadPdf}
-            title="Export to PDF"
           />
           <div className="relative">
             <Filter
@@ -156,25 +102,25 @@ const Member = () => {
         <div className="overflow-x-auto border border-[#1f2e2e] rounded-lg">
           <div className="min-w-[800px]">
             {/* Table Header */}
-            <div className="grid grid-cols-9 bg-[#050D0F] text-gray-300 text-sm font-medium py-3 px-5 border-b border-[#1f2e2e]">
-              {/* <p>User ID</p> */}
-              <p>Username</p>
-              <p>User Id</p>
-              <p>Wallet Address</p>
-              <p>Sponsor ID</p>
-              <p>Active Package</p>
-              <p>Total Earnings</p>
-              <p>Status</p>
-              <p>Verify User</p>
-              <p>view</p>
+            <div className="grid grid-cols-8 gap-4 bg-[#050D0F] text-gray-300 text-sm font-medium py-3 px-5 border-b border-[#1f2e2e]">
+              <p className="text-left">Name</p>
+              <p className="text-center">User ID</p>
+              <p className="text-center">Email</p>
+              <p className="text-center">Phone</p>
+              <p className="text-center">Total Earnings</p>
+              <p className="text-center">Status</p>
+              <p className="text-center">Joined</p>
+              <p className="text-center">View</p>
             </div>
 
             {/* Table Rows */}
             <AnimatePresence>
-              {usersData && usersData.length > 0 ? (
+              {loading ? (
+                <div className="text-center py-8 text-gray-400">Loading users...</div>
+              ) : usersData && usersData.length > 0 ? (
                 usersData.map((user, index) => (
                   <motion.div
-                    key={user.id}
+                    key={user._id}
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{
@@ -183,95 +129,50 @@ const Member = () => {
                       delay: index * 0.1,
                     }}
                     whileHover={{ y: -2, transition: { duration: 0.2 } }}
-                    onClick={() => handlesingleuser(user.id)}
-                    className="grid grid-cols-9 items-center bg-[#050D0F] text-sm text-gray-300 px-5 py-3 border-b border-[#1f2e2e] hover:bg-[#112828] transition cursor-pointer"
+                    onClick={() => handlesingleuser(user.userId)}
+                    className="grid grid-cols-8 gap-4 items-center bg-[#050D0F] text-sm text-gray-300 px-5 py-3 border-b border-[#1f2e2e] hover:bg-[#112828] transition cursor-pointer"
                   >
-                    {/* <p>{user.id.length > 8 ? user.id.substring(0, 8) + '...' : user.id}</p> */}
-                    <p>{user.name}</p>
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 bg-[#1de9a6] rounded-full flex items-center justify-center text-black font-bold flex-shrink-0">
+                        {user.name?.charAt(0).toUpperCase()}
+                      </div>
+                      <span className="truncate">{user.name}</span>
+                    </div>
                     <p
-                      className="cursor-pointer hover:text-[#1de9a6] transition"
-                      title="Click to copy"
+                      className="cursor-pointer hover:text-[#1de9a6] transition text-center truncate"
+                      title={user.userId}
                       onClick={(e) => {
                         e.stopPropagation();
                         navigator.clipboard.writeText(user.userId);
                       }}
                     >
-                      {user.userId}
+                      {user.userId?.length > 12 ? `${user.userId.substring(0, 12)}...` : user.userId}
                     </p>
-                    <p
-                      className="cursor-pointer hover:text-[#1de9a6] transition relative"
-                      title="Click to copy"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        navigator.clipboard.writeText(user.walletAddress);
-                      }}
-                    >
-                      {user.walletAddress?.length > 10
-                        ? `${user.walletAddress.substring(
-                            0,
-                            12,
-                          )}...${user.walletAddress.substring(
-                            user.walletAddress.length - 0,
-                          )}`
-                        : user.walletAddress}
+                    <p className="text-center truncate" title={user.email}>
+                      {user.email?.length > 20 ? `${user.email.substring(0, 20)}...` : user.email}
                     </p>
-                    <p>{user.sponsorId}</p>
-                    <p className="text-[#31BDD0]">{user.activePackage} USDT</p>
-                    <p className="text-[#0d9c44ff]">
-                      {Number(user?.totalEarnings).toFixed(3)} USDT
+                    <p className="text-center">{user.countryCode} {user.whatsappNumber}</p>
+                    <p className="text-[#0d9c44ff] text-center">
+                      ₹{Number(user.totalEarnings).toFixed(2)}
                     </p>
-                    <div
-                      style={{
-                        display: "inline-block",
-                        padding: "5px 12px",
-                        backgroundColor:
-                          user.status === "Active"
-                            ? "#0e1a0e"
-                            : user.status === "Suspended"
-                              ? "#1a0e0e"
-                              : "#1a1a0e",
-                        color:
-                          user.status === "Active"
-                            ? "#0d9c44ff"
-                            : user.status === "Suspended"
-                              ? "#dc2626"
-                              : "#f59e0b",
-                        border: `1px solid ${
-                          user.status === "Active"
-                            ? "#0d9c44ff"
-                            : user.status === "Suspended"
-                              ? "#dc2626"
-                              : "#f59e0b"
-                        }`,
-                        borderRadius: "10px",
-                        fontWeight: 500,
-                        fontSize: "14px",
-                        width: "fit-content",
-                      }}
-                    >
-                      {user.status}
+                    <div className="flex justify-center">
+                      <div className={`px-3 py-1 rounded text-xs font-medium ${
+                        user.isActive
+                          ? "bg-green-900 text-green-400 border border-green-400"
+                          : "bg-red-900 text-red-400 border border-red-400"
+                      }`}>
+                        {user.isActive ? "Active" : "Inactive"}
+                      </div>
                     </div>
-                    <div>
-                      {user.status?.toLowerCase() === "inactive" ? (
-                        <button
-                          onClick={(e) => {
-                            handleVerifyuser(user.id);
-                            e.stopPropagation();
-                          }}
-                          className="px-3 py-1 bg-[#1de9a6] text-black text-xs rounded hover:bg-[#17c794] transition font-medium"
-                        >
-                          Verify
-                        </button>
-                      ) : (
-                        <span className="text-[#0d9c44ff] text-xs">
-                          Verified
-                        </span>
-                      )}
+                    <p className="text-center">
+                      {new Date(user.createdAt).toLocaleDateString()}
+                    </p>
+                    <div className="flex justify-center">
+                      <Eye
+                        className="w-4 h-4 cursor-pointer hover:text-[#1de9a6] transition"
+                        onClick={() => handlesingleuser(user.userId)}
+                      />
                     </div>
-                    <Eye
-                      className="w-4 h-4 cursor-pointer hover:text-[#1de9a6] transition"
-                      onClick={() => handlesingleuser(user.id)}
-                    />
                   </motion.div>
                 ))
               ) : (

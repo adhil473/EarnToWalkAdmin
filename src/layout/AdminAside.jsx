@@ -23,6 +23,9 @@ import profileSelected from '../assets/profileSelected.png'
 import logout from "../assets/logout.png";
 import logoutSelected from '../assets/logoutSelected.png'
 import logoutt from '../assets/logout/logout.png'
+import { GiTrophyCup } from "react-icons/gi";
+import { IoSettingsSharp } from "react-icons/io5";
+
 
 const AdminAside = ({ open, setOpen }) => {
   const location = useLocation();
@@ -34,27 +37,20 @@ const AdminAside = ({ open, setOpen }) => {
   const menuItems = [
     { name: "Dashboard", redirect_url: "/dashboard", icon: dashboard, iconSelected: dashboardSelected },
     { name: "Members", redirect_url: "/member", icon: plan, iconSelected: planSelected },
-    // { name: "BV Log", redirect_url: "/bvlog", icon: bvlog, iconSelected: bvlogSelected },
-    // { name: "Referrals", redirect_url: "/referral", icon: referrals, iconSelected: referralsSelected },
+     { name: "Challenges", redirect_url: "/challenges", icon: GiTrophyCup, iconSelected: GiTrophyCup },
     { 
       name: "Reports", 
       hasSubmenu: true, 
       icon: reports, 
       iconSelected: reportsSelected,
       submenu: [
-        // { name: "Transaction Log", redirect_url: "/reports/transaction-log" },
         { name: "Withdraw", redirect_url: "/reports/deposit-log" },
         { name: "Withdraw Log", redirect_url: "/reports/withdraw-log" },
-        { name: "Invest Log", redirect_url: "/reports/invest-log" },
-        // { name: "Referral Commissions", redirect_url: "/reports/referral-commissions" },
-        // { name: "Binary Commissions", redirect_url: "/reports/binary-commissions" },
-        // { name: "Staking Reward", redirect_url: "/reports/staking-reward" },
       ]
     },
     { name: "KYC ", redirect_url: "/kyc", icon: withdraw, iconSelected: withdrawSelected },
-    // { name: "My Tree", redirect_url: "/treeStructure", icon: tree, iconSelected: treeSelected },
+    { name: "Settings", redirect_url: "/settings", icon: IoSettingsSharp, iconSelected: IoSettingsSharp },
     { name: "Support", redirect_url: "/support", icon: support, iconSelected: supportSelected },
-    // { name: "Profile", redirect_url: "/profile", icon: profile, iconSelected: profileSelected },
     { name: "Logout", isLogout: true, icon: logoutt, iconSelected: logoutSelected },
   ];
 
@@ -108,7 +104,7 @@ const AdminAside = ({ open, setOpen }) => {
               className="flex items-center text-xl font-bold cursor-pointer"
             >
               <img src={logo} className="w-12" />
-              <p className={`text-xl ml-2 ${!open && "hidden"}`}>AXTON</p>
+              <p className={`text-xl ml-2 ${!open && "hidden"}`}>Earn To Walk</p>
             </button>
           </div>
 
@@ -137,11 +133,15 @@ const AdminAside = ({ open, setOpen }) => {
                     }
                   }}
                 >
-                  <img 
-                    src={item.hasSubmenu && showReportsSubmenu ? item.iconSelected : location.pathname === item.redirect_url ? item.iconSelected : item.icon} 
-                    alt={item.name} 
-                    className="w-5 h-5" 
-                  />
+                  {item.icon && (typeof item.icon === 'string' ? (
+                    <img 
+                      src={item.hasSubmenu && showReportsSubmenu ? item.iconSelected : location.pathname === item.redirect_url ? item.iconSelected : item.icon} 
+                      alt={item.name} 
+                      className="w-5 h-5" 
+                    />
+                  ) : (
+                    <item.icon className="w-5 h-5" />
+                  ))}
                   <span className={`text-md font-normal tracking-wide font-inter ${!open && "hidden"}`}>{item.name}</span>
                   {item.hasSubmenu && open && (
                     <svg 
@@ -216,7 +216,7 @@ const AdminAside = ({ open, setOpen }) => {
             </div>
             
             <h2 className="text-2xl font-semibold mb-3 text-white">Log out?</h2>
-            <p className="text-sm text-gray-400 mb-6">Are you Sure You Want to Delete This Account?</p>
+            <p className="text-sm text-gray-400 mb-6">Are you Sure You Want to Log Out This Account?</p>
             
             <div className="flex gap-3">
               <button 

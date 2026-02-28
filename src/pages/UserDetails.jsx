@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
-import { getSingleUsers, getUsersIncomeHistory, planPackages, planPurchaseByAdmin, updateUserPassword, updateUserProfile } from '../api/serviceApi'
+import {  getUsersIncomeHistory, planPackages, planPurchaseByAdmin, updateUserPassword, updateUserProfile,getuserById } from '../api/serviceApi'
 import profile from '../assets/profile/profile.png'
 import message from '../assets/profile/message.png'
 import phone from '../assets/profile/phone.png'
@@ -61,6 +61,7 @@ const UserDetails = () => {
       }
     } catch (error) {
       console.error('Error fetching plan packages:', error)
+      setPlans([])
     }
   }
   useEffect(() => {
@@ -69,13 +70,14 @@ const UserDetails = () => {
 
   const fetchUserData = async () => {
     try {
-      const res = await getSingleUsers(userId)
-      if (res.success) {
+      const res = await getuserById(userId)
+      if (res?.success && res?.data) {
         setUserData(res.data)
-        setIsActive(res.data.profile.status === 'Active')
+        setIsActive(res.data?.isActive)
       }
     } catch (error) {
       console.error('Error fetching user details:', error)
+      showToast('Failed to load user details')
     } finally {
       setLoading(false)
     }
@@ -164,9 +166,9 @@ const UserDetails = () => {
 
   const handleEditProfile = () => {
     setProfileData({
-      name: userData.profile.name,
-      email: userData.profile.email,
-      phone: userData.profile.phone
+      name: userData?.profile?.name || '',
+      email: userData?.profile?.email || '',
+      phone: userData?.profile?.phone || ''
     })
     setShowProfileModal(true)
   }
@@ -263,66 +265,85 @@ const UserDetails = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Name */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="bg-[#050D0F] border border-[#1f2e2e] p-4 rounded-xl min-h-[110px] md:min-h-[142px]"
-          >
-            <div className="flex items-center">
-              <img src={profile} alt='profile.png' className='w-13' />
-              <p className="text-sm text-gray-400 mb-1 ml-2">Name</p>
-            </div>
-            <p className="text-md font-medium ml-3 mt-1 pt-2">{userData.profile.name}</p>
-          </motion.div>
+          <div className="bg-[#050D0F] border border-[#1f2e2e] p-4 rounded-xl">
+            <p className="text-gray-400 text-sm">Name</p>
+            <p className="text-white font-semibold mt-1">
+              {userData?.name || "N/A"}
+            </p>
+          </div>
 
           {/* Email */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="bg-[#050D0F] border border-[#1f2e2e] p-4 rounded-xl min-h-[110px] md:min-h-[142px]"
-          >
-            <div className="flex items-center">
-              <img src={message} alt='message.png' className='w-13' />
-              <p className="text-sm text-gray-400 mb-1 ml-2">Email</p>
-            </div>
-            <p className="text-md font-medium ml-3 mt-1 pt-2">{userData.profile.email}</p>
-          </motion.div>
+          <div className="bg-[#050D0F] border border-[#1f2e2e] p-4 rounded-xl">
+            <p className="text-gray-400 text-sm">Email</p>
+            <p className="text-white font-semibold mt-1">
+              {userData?.email || "N/A"}
+            </p>
+          </div>
 
           {/* Phone */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            className="bg-[#050D0F] border border-[#1f2e2e] p-4 rounded-xl min-h-[110px] md:min-h-[142px]"
-          >
-            <div className="flex items-center">
-              <img src={phone} alt='phone.png' className='w-13' />
-              <p className="text-sm text-gray-400 mb-1 ml-2">Phone Number</p>
-            </div>
-            <p className="text-md font-medium ml-3 mt-1 pt-2">{userData.profile.phone}</p>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="bg-[#050D0F] border border-[#1f2e2e] p-4 rounded-xl min-h-[110px] md:min-h-[142px]"
-          >
-            <div className="flex items-center">
-              <img src={profile} alt='profile.png' className='w-13' />
-              <p className="text-sm text-gray-400 mb-1 ml-2">Sponser & Position</p>
-            </div>
-            <p className="text-md font-medium ml-3 mt-1 pt-2">{userData?.profile?.sponsor?.name || 'no user'} / {userData?.profile?.position}</p>
+          <div className="bg-[#050D0F] border border-[#1f2e2e] p-4 rounded-xl">
+            <p className="text-gray-400 text-sm">Phone</p>
+            <p className="text-white font-semibold mt-1">
+              {userData?.countryCode} {userData?.whatsappNumber}
+            </p>
+          </div>
 
-          </motion.div>
+          {/* User ID */}
+          <div className="bg-[#050D0F] border border-[#1f2e2e] p-4 rounded-xl">
+            <p className="text-gray-400 text-sm">User ID</p>
+            <p className="text-white font-semibold mt-1">
+              {userData?.userId}
+            </p>
+          </div>
+
+          {/* Gender */}
+          <div className="bg-[#050D0F] border border-[#1f2e2e] p-4 rounded-xl">
+            <p className="text-gray-400 text-sm">Gender</p>
+            <p className="text-white font-semibold mt-1 capitalize">
+              {userData?.gender}
+            </p>
+          </div>
+
+          {/* DOB */}
+          <div className="bg-[#050D0F] border border-[#1f2e2e] p-4 rounded-xl">
+            <p className="text-gray-400 text-sm">Date of Birth</p>
+            <p className="text-white font-semibold mt-1">
+              {new Date(userData?.dob).toLocaleDateString()}
+            </p>
+          </div>
+
+          {/* Total Earnings */}
+          <div className="bg-[#050D0F] border border-[#1f2e2e] p-4 rounded-xl">
+            <p className="text-gray-400 text-sm">Total Earnings</p>
+            <p className="text-green-400 font-semibold mt-1">
+              ₹{Number(userData?.totalEarnings).toFixed(2)}
+            </p>
+          </div>
+
+          {/* Status */}
+          <div className="bg-[#050D0F] border border-[#1f2e2e] p-4 rounded-xl">
+            <p className="text-gray-400 text-sm">Status</p>
+            <p className={`font-semibold mt-1 ${
+              userData?.isActive ? "text-green-400" : "text-red-400"
+            }`}>
+              {userData?.isActive ? "Active" : "Inactive"}
+            </p>
+          </div>
+
+          {/* Created Date */}
+          <div className="bg-[#050D0F] border border-[#1f2e2e] p-4 rounded-xl">
+            <p className="text-gray-400 text-sm">Joined On</p>
+            <p className="text-white font-semibold mt-1">
+              {new Date(userData?.createdAt).toLocaleDateString()}
+            </p>
+          </div>
         </div>
       </motion.div>
 
-      {/* Financial Summary Section */}
-      <motion.div
+      {/* Financial Summary Section - COMMENTED OUT */}
+      {/* <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.4, ease: "easeOut" }}
@@ -338,7 +359,7 @@ const UserDetails = () => {
             className="bg-[#050D0F] border border-[#1f2e2e] p-4 rounded-xl"
           >
             <p className="text-sm text-gray-400 mb-2">Total Investment</p>
-            <p className="text-lg font-semibold text-[#0d9c44ff]">{Number(userData.financialSummary.totalInvestment).toFixed(3)} USDT</p>
+            <p className="text-lg font-semibold text-[#0d9c44ff]">{Number(userData?.financialSummary?.totalInvestment || 0).toFixed(3)} USDT</p>
           </motion.div>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -347,7 +368,7 @@ const UserDetails = () => {
             className="bg-[#050D0F] border border-[#1f2e2e] p-4 rounded-xl"
           >
             <p className="text-sm text-gray-400 mb-2">Total ROI</p>
-            <p className="text-lg font-semibold text-[#0d9c44ff]">{Number(userData.financialSummary.totalROI).toFixed(3)} USDT</p>
+            <p className="text-lg font-semibold text-[#0d9c44ff]">{Number(userData?.financialSummary?.totalROI || 0).toFixed(3)} USDT</p>
           </motion.div>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -356,7 +377,7 @@ const UserDetails = () => {
             className="bg-[#050D0F] border border-[#1f2e2e] p-4 rounded-xl"
           >
             <p className="text-sm text-gray-400 mb-2">Available Balance</p>
-            <p className="text-lg font-semibold text-[#0d9c44ff]">{Number(userData.financialSummary.availableBalance).toFixed(3)} USDT</p>
+            <p className="text-lg font-semibold text-[#0d9c44ff]">{Number(userData?.financialSummary?.availableBalance || 0).toFixed(3)} USDT</p>
           </motion.div>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -413,8 +434,8 @@ const UserDetails = () => {
         </div>
       </motion.div> */}
 
-      {/* Active Packages Section */}
-      <motion.div
+      {/* Active Packages Section - COMMENTED OUT */}
+      {/* <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.9, ease: "easeOut" }}
@@ -432,7 +453,7 @@ const UserDetails = () => {
           </button>
         </div>
         <div className="space-y-4">
-          {userData.packages && userData.packages.length > 0 ? (
+          {userData?.packages && userData.packages.length > 0 ? (
             userData.packages.map((pkg, index) => (
               <motion.div
                 key={index}
@@ -459,9 +480,9 @@ const UserDetails = () => {
             </div>
           )}
         </div>
-      </motion.div>
+      </motion.div> */}
 
-      {/* Income History Section */}
+      {/* Income History Section - COMMENTED OUT
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
@@ -471,16 +492,13 @@ const UserDetails = () => {
         <p className="text-sm text-gray-400 mt-1 mb-4">Latest Income Transactions And Earnings.</p>
         <div className="overflow-x-auto border border-[#1f2e2e] rounded-lg">
           <div className="min-w-[600px]">
-            {/* Table Header */}
             <div className="grid grid-cols-4 bg-[#050D0F] text-gray-300 text-sm font-medium py-3 px-5 border-b border-[#1f2e2e]">
               <p>Date & Time</p>
-              {/* <p>Name</p> */}
               <p>Detail</p>
               <p>Amount</p>
               <p>Status</p>
             </div>
 
-            {/* Table Rows */}
             <AnimatePresence>
               {incomHistory && incomHistory.length > 0 ? (
                 incomHistory.map((item, index) => (
@@ -538,7 +556,6 @@ const UserDetails = () => {
           </div>
         </div>
 
-        {/* Pagination */}
         {incomHistory && incomHistory.length > 0 && totalPages > 1 && (
           <div className="flex justify-center items-center mt-6 space-x-2">
             <button
@@ -581,8 +598,9 @@ const UserDetails = () => {
           </div>
         )}
       </motion.div>
+      */}
 
-      {/* Add Package Modal */}
+      {/* Modals */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-[#1a1a1a] rounded-2xl p-4 sm:p-6 w-full max-w-sm sm:max-w-md mx-auto max-h-[90vh] flex flex-col">
