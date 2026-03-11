@@ -9,15 +9,6 @@ export const adminProfile = async () => {
     }
 }
 
-export const ReferralLinks = async () => {
-    try {
-        const response = await axiosConfig.get("users/referral-links")
-        return response.data
-    } catch (error) {
-        return error?.response?.data || error.message
-    }
-}
-
 export const planPackages = async () => {
     try {
         const response = await axiosConfig.get("packages/info")
@@ -47,35 +38,10 @@ export const purchasedPackages = async () => {
         return error?.response?.data || error.message
     }
 }
-export const adminTree = async (id) => {
-    try {
-        const res = await axiosConfig.get(`admin/users/${id}/genealogy-tree?depth=4`);
-        return res.data
-    } catch (error) {
-        return error?.response?.data || error.message
-    }
-}
+
 export const adminDashboard = async () => {
     try {
         const res = await axiosConfig.get(`admin/dashboard`);
-        return res.data
-    } catch (error) {
-        return error?.response?.data || error.message
-    }
-}
-
-export const getbvlogData = async () => {
-    try {
-        const res = await axiosConfig.get(`tree/bvlog`);
-        return res.data
-    } catch (error) {
-        return error?.response?.data || error.message
-    }
-}
-
-export const referralHistory = async (page = 1, limit = 10) => {
-    try {
-        const res = await axiosConfig.get(`earnings/referral-history?page=${page}&limit=${limit}`);
         return res.data
     } catch (error) {
         return error?.response?.data || error.message
@@ -107,17 +73,6 @@ export const supportTicketHistory = async (page = 1, limit = 10, status = '', pr
     }
 }
 
-export const submitUpdateKYC = async (formData) => {
-    try {
-        const res = await axiosConfig.put('kyc/update-kyc', formData, {
-            headers: { 'Content-Type': 'multipart/form-data' },
-        });
-        return res.data;
-    } catch (error) {
-        return error?.response?.data || { success: false, message: error.message };
-    }
-};
-
 export const updateuserProfile = async (data) => {
     try {
         const profile = {
@@ -133,37 +88,9 @@ export const updateuserProfile = async (data) => {
     }
 }
 
-export const binaryCommission = async () => {
-    try {
-        const res = await axiosConfig.get(`binary/commissions`);
-        return res.data;
-    } catch (error) {
-        return error?.response?.data || error.message
-    }
-}
-
 export const transactions = async (page = 1, limit = 10) => {
     try {
         const res = await axiosConfig.get(`earnings/all-transactions?page=${page}&limit=${limit}`);
-        return res.data;
-    } catch (error) {
-        console.error('Transaction fetch error:', error);
-        return error?.response?.data || { message: error.message };
-    }
-};
-
-export const treeByUserid = async (id) => {
-    try {
-        const res = await axiosConfig.get(`admin/users/${id}/genealogy-tree?depth=4`);
-        return res.data
-    } catch (error) {
-        return error?.response?.data || error.message
-    }
-}
-
-export const stakingReward = async (page = 1, limit = 10) => {
-    try {
-        const res = await axiosConfig.get(`earnings/roi-history?page=${page}&limit=${limit}`);
         return res.data;
     } catch (error) {
         console.error('Transaction fetch error:', error);
@@ -198,34 +125,6 @@ export const getUsersIncomeHistory = async (id, page = 1, limit = 10) => {
     }
 
 }
-export const getUsersKYCDetails = async (params = {}) => {
-    try {
-        const { page = 1, limit = 10, status } = params
-        let url = `admin/kyc/submissions?page=${page}&limit=${limit}`
-        if (status) {
-            url += `&status=${status}`
-        }
-        const res = await axiosConfig.get(url)
-        return res.data
-    } catch (error) {
-        return error?.response?.data || error.message
-    }
-}
-
-
-export const verifyKYC = async (id, status) => {
-    try {
-        const res = await axiosConfig.patch(`admin/kyc/${id}/status`,
-            {
-                "status": status, // or "rejected"
-                "remarks": "Document verified successfully"
-            }
-        )
-        return res.data;
-    } catch (error) {
-        return error?.response?.data || { success: false, message: error.message };
-    }
-};
 
 export const getTicketDetails = async (id) => {
     try {
@@ -471,5 +370,38 @@ export const updateAdsSettings = async (data) => {
     } catch (error) {
         console.error('Failed to update ads settings:', error?.response?.data || error.message);
         throw error;
+    }
+}
+
+// binary commission api
+export const binaryCommission = async (page = 1, limit = 10) => {
+    try {
+        const res = await axiosConfig.get(`admin/binary-commission?page=${page}&limit=${limit}`);
+        return res.data;
+    } catch (error) {
+        console.error('Failed to fetch binary commission:', error?.response?.data || error.message);
+        return error?.response?.data || { message: error.message };
+    }
+}
+
+// bvlog data api
+export const getbvlogData = async () => {
+    try {
+        const res = await axiosConfig.get('admin/bv-log');
+        return res.data;
+    } catch (error) {
+        console.error('Failed to fetch bvlog data:', error?.response?.data || error.message);
+        return error?.response?.data || { message: error.message };
+    }
+}
+
+// staking reward api
+export const stakingReward = async (page = 1, limit = 10) => {
+    try {
+        const res = await axiosConfig.get(`admin/staking-rewards?page=${page}&limit=${limit}`);
+        return res.data;
+    } catch (error) {
+        console.error('Failed to fetch staking rewards:', error?.response?.data || error.message);
+        return error?.response?.data || { message: error.message };
     }
 }

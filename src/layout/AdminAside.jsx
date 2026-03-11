@@ -6,20 +6,12 @@ import dashboard from "../assets/dashboard.png";
 import dashboardSelected from '../assets/dashboardSelected.png'
 import plan from "../assets/plan.png";
 import planSelected from '../assets/planSelected.png'
-import bvlog from "../assets/bvlog.png";
-import bvlogSelected from '../assets/bvlogSelected.png'
-import referrals from "../assets/referral.png";
-import referralsSelected from '../assets/referralSelected.png'
 import reports from "../assets/reports.png";
 import reportsSelected from '../assets/reportsSelected.png'
 import withdraw from "../assets/withdraw.png";
 import withdrawSelected from '../assets/withdrawSelected.png'
-import tree from "../assets/tree.png";  
-import treeSelected from '../assets/treeSelected.png'
 import support from "../assets/support.png";
 import supportSelected from '../assets/supportSelected.png'
-import profile from "../assets/profile.png";
-import profileSelected from '../assets/profileSelected.png'
 import logout from "../assets/logout.png";
 import logoutSelected from '../assets/logoutSelected.png'
 import logoutt from '../assets/logout/logout.png'
@@ -48,7 +40,6 @@ const AdminAside = ({ open, setOpen }) => {
         { name: "Withdraw Log", redirect_url: "/reports/withdraw-log" },
       ]
     },
-    { name: "KYC ", redirect_url: "/kyc", icon: withdraw, iconSelected: withdrawSelected },
     { name: "Settings", redirect_url: "/settings", icon: IoSettingsSharp, iconSelected: IoSettingsSharp },
     { name: "Support", redirect_url: "/support", icon: support, iconSelected: supportSelected },
     { name: "Logout", isLogout: true, icon: logoutt, iconSelected: logoutSelected },

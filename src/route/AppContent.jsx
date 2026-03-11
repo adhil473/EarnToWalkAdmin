@@ -5,10 +5,6 @@ import MainLayout from "../layout/MainLayout";
 import Loader from "../layout/Loader";
 import Overview from '../pages/Overview';
 import Support from '../pages/Support';
-import Referral from '../pages/Referral';
-import TreeStructure from '../pages/TreeStructure';
-import Tree from '../pages/Tree';
-import Bvlog from '../pages/Bvlog';
 import MLMPageNotFound from '../pages/404';
 import SignIn from '../pages/SignIn';
 import SignUp from '../pages/SignUp';
@@ -19,13 +15,8 @@ import Challenge from '../pages/Challenge';
 import CreateChallenge from '../pages/CreateChallenge';
 import EditChallenge from '../pages/EditChallenge';
 import Settings from '../pages/Settings';
-import ReferralCommissions from '../pages/ReferralCommissions';
-import BinaryCommissions from '../pages/BinaryCommissions';
-import StakingReward from '../pages/StakingReward';
 import Member from '../pages/Member';
 import UserDetails from '../pages/UserDetails';
-import Profile from '../pages/Profile';
-import Kyc from '../pages/Kyc';
 
 const AppContent = () => {
     const { isAuthenticated } = useAuth();
@@ -40,13 +31,7 @@ const AppContent = () => {
                       <Route path="dashboard" element={<Overview />} />
                       <Route path="member" element={<Member/>} />
                       <Route path="user-details/:userId" element={<UserDetails/>} />
-                      <Route path="profile" element={<Profile/>} />
-                      <Route path="kyc" element={<Kyc/>} />
                       <Route path="support" element={<Support/>} />
-                      <Route path="referral" element={<Referral/>} />
-                      <Route path="treeStructure/:userId" element={<TreeStructure/>} />
-                      <Route path="tree" element={<Tree/>} />
-                      <Route path="bvlog" element={<Bvlog/>} />
                       <Route path="reports/transaction-log" element={<TransactionLog/>} />
                       <Route path="reports/deposit-log" element={<DepositLog/>} />
                       <Route path="reports/withdraw-log" element={<WithdrawLog/>} />
@@ -55,9 +40,6 @@ const AppContent = () => {
                       <Route path="challenges/create" element={<CreateChallenge/>} />
                       <Route path="challenges/edit/:challengeId" element={<EditChallenge/>} />
                       <Route path="settings" element={<Settings/>} />
-                      <Route path="reports/referral-commissions" element={<ReferralCommissions/>} />
-                      <Route path="reports/binary-commissions" element={<BinaryCommissions/>} />
-                      <Route path="reports/staking-reward" element={<StakingReward/>} />
                 </Route>
             <Route path="*" element={<MLMPageNotFound/>} />
             </Routes>
