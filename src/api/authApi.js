@@ -42,9 +42,6 @@ export const signUp = async(formData) =>{
 // }
 
 
-
-
-
 export const changePassword = async(passwordData)=>{
     try {
         const response = await axiosConfig.post('auth/change-password',{

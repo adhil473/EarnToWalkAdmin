@@ -451,3 +451,25 @@ export const getuserById = async (userid)=>{
     }
     
 }
+
+// ads settings get api
+export const getAdsSettings = async () => {
+    try {
+        const res = await axiosConfig.get('/ads/admin/settings');
+        return res.data;
+    } catch (error) {
+        console.error('Failed to fetch ads settings:', error?.response?.data || error.message);
+        throw error;
+    }
+}
+
+// ads settings update api
+export const updateAdsSettings = async (data) => {
+    try {
+        const res = await axiosConfig.put('/ads/admin/settings', data);
+        return res.data;
+    } catch (error) {
+        console.error('Failed to update ads settings:', error?.response?.data || error.message);
+        throw error;
+    }
+}
