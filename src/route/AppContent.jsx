@@ -35,7 +35,7 @@ const AppContent = () => {
                       <Route path="reports/transaction-log" element={<TransactionLog/>} />
                       <Route path="reports/deposit-log" element={<DepositLog/>} />
                       <Route path="reports/withdraw-log" element={<WithdrawLog/>} />
-                      {/* earnto walk route starts here   */}
+                      {/* earnto walk route starts here added routes   */}
                       <Route path="challenges" element={<Challenge/>} />
                       <Route path="challenges/create" element={<CreateChallenge/>} />
                       <Route path="challenges/edit/:challengeId" element={<EditChallenge/>} />

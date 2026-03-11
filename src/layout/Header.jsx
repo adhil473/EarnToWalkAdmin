@@ -2,7 +2,6 @@ import logo from '../assets/logo.png'
 import { useState, useEffect } from 'react';
 import { adminProfile } from "../api/serviceApi";
 import { HiMenuAlt3 } from 'react-icons/hi'
-import ConnectWeb3 from '../web3/web3Connect';
 
 const Header = ({ open, setOpen }) => {
 

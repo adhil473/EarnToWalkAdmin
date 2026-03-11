@@ -33,7 +33,7 @@ axiosConfig.interceptors.response.use(
          error.response?.data?.message === "Invalid token or admin not found.")) {
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
-      window.location.href = '/signin';
+      globalThis.location.href = '/signin';
     }
     return Promise.reject(error);
   }

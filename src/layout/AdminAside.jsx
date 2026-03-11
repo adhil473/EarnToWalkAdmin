@@ -4,12 +4,8 @@ import { useAuth } from "../context/AuthContext";
 import logo from "../assets/logo.png";
 import dashboard from "../assets/dashboard.png";
 import dashboardSelected from '../assets/dashboardSelected.png'
-import plan from "../assets/plan.png";
-import planSelected from '../assets/planSelected.png'
 import reports from "../assets/reports.png";
 import reportsSelected from '../assets/reportsSelected.png'
-import withdraw from "../assets/withdraw.png";
-import withdrawSelected from '../assets/withdrawSelected.png'
 import support from "../assets/support.png";
 import supportSelected from '../assets/supportSelected.png'
 import logout from "../assets/logout.png";
@@ -17,6 +13,7 @@ import logoutSelected from '../assets/logoutSelected.png'
 import logoutt from '../assets/logout/logout.png'
 import { GiTrophyCup } from "react-icons/gi";
 import { IoSettingsSharp } from "react-icons/io5";
+import { FaUsers } from "react-icons/fa";
 
 
 const AdminAside = ({ open, setOpen }) => {
@@ -28,7 +25,7 @@ const AdminAside = ({ open, setOpen }) => {
 
   const menuItems = [
     { name: "Dashboard", redirect_url: "/dashboard", icon: dashboard, iconSelected: dashboardSelected },
-    { name: "Members", redirect_url: "/member", icon: plan, iconSelected: planSelected },
+    { name: "Members", redirect_url: "/member", icon: FaUsers, iconSelected: FaUsers },
      { name: "Challenges", redirect_url: "/challenges", icon: GiTrophyCup, iconSelected: GiTrophyCup },
     { 
       name: "Reports", 

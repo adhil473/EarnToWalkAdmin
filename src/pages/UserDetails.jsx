@@ -2,13 +2,9 @@ import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import {  getUsersIncomeHistory, planPackages, planPurchaseByAdmin, updateUserPassword, updateUserProfile,getuserById } from '../api/serviceApi'
-import profile from '../assets/profile/profile.png'
-import message from '../assets/profile/message.png'
-import phone from '../assets/profile/phone.png'
-import edit from '../assets/profile/edit.png'
 import usdt from '../assets/usdt.png'
 import { useToast } from '../context/ToastContext'
-import { FaRocket, FaFire, FaBolt, FaCrown, FaGem, FaStar, FaTrophy, FaShieldAlt, FaAtom, FaEye, FaEyeSlash } from 'react-icons/fa'
+import { FaRocket, FaFire, FaBolt, FaCrown, FaGem, FaStar, FaTrophy, FaShieldAlt, FaAtom, FaEye, FaEyeSlash, FaUser, FaEnvelope, FaPhone, FaEdit } from 'react-icons/fa'
 
 const UserDetails = () => {
   const { userId } = useParams()
@@ -260,7 +256,7 @@ const UserDetails = () => {
             <button
               onClick={handleEditProfile}
               className="text-white font-semibold text-sm px-4.5 py-2.5 rounded-lg transition-all duration-300 hover:scale-95 whitespace-nowrap flex items-center gap-2 border border-[#4B5563]">
-              <img src={edit} alt='edit' className='w-4' />
+              <FaEdit className='w-4 h-4' />
             </button>
           </div>
         </div>
