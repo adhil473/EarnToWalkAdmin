@@ -18,27 +18,6 @@ export const planPackages = async () => {
     }
 }
 
-export const purchasePackages = async (data) => {
-    try {
-        const response = await axiosConfig.post("packages/purchase", {
-            packageType: data.packageType,
-            transactionHash: data.transactionHash
-        })
-        return response.data
-    } catch (error) {
-        return error?.response?.data || error.message
-    }
-}
-
-export const purchasedPackages = async () => {
-    try {
-        const response = await axiosConfig.get("packages/my-packages")
-        return response.data
-    } catch (error) {
-        return error?.response?.data || error.message
-    }
-}
-
 export const adminDashboard = async () => {
     try {
         const res = await axiosConfig.get(`admin/dashboard`);
@@ -68,21 +47,6 @@ export const supportTicketHistory = async (page = 1, limit = 10, status = '', pr
 
         const res = await axiosConfig.get(url);
         return res.data;
-    } catch (error) {
-        return error?.response?.data || error.message
-    }
-}
-
-export const updateuserProfile = async (data) => {
-    try {
-        const profile = {
-            name: data.name,
-
-            phone: data.phone,
-
-        }
-        const response = await axiosConfig.put("users/profile", profile)
-        return response.data
     } catch (error) {
         return error?.response?.data || error.message
     }
@@ -159,26 +123,6 @@ export const withdrawHistory = async (page = 1, limit = 10) => {
     }
 };
 
-export const investHistory = async (page = 1, limit = 10) => {
-    try {
-        const res = await axiosConfig.get(`admin/purchases/all?page=${page}&limit=${limit}`);
-        return res.data;
-    } catch (error) {
-        console.error('Transaction fetch error:', error);
-        return error?.response?.data || { message: error.message };
-    }
-};
-
-export const investStatus = async () => {
-    try {
-        const res = await axiosConfig.get(`admin/purchases/stats`);
-        return res.data;
-    } catch (error) {
-        console.error('Transaction fetch error:', error);
-        return error?.response?.data || { message: error.message };
-    }
-};
-
 export const withdrawAllAccept = async () => {
     try {
         const res = await axiosConfig.post(`admin/withdrawals/approve-all`);
@@ -236,24 +180,6 @@ export const updateUserProfile = async (id, profileData) => {
         return error?.response?.data || error.message
     }
 }
-export const userVerify = async (id) => {
-    try {
-        const res = await axiosConfig.patch(`admin/users/${id}/verify-email`)
-        return res.data;
-    } catch (error) {
-        return error?.response?.data || { success: false, message: error.message };
-    }
-};
-
-export const getPdf = async () => {
-  try {
-    const res = await axiosConfig.get(`admin/users?export=true`);
-    return res;
-  } catch (error) {
-    return error?.response?.data || { success: false, message: error.message };
-  }
-};
-
 
 // new earn to walk start here all others to remove 
 
