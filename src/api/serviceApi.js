@@ -71,14 +71,7 @@ export const getUsers = async (page = 1, limit = 10, search, status) => {
     }
 
 }
-// export const getSingleUsers = async (id) => {
-//     try {
-//         const res = await axiosConfig.get(`admin/users/${id}`);
-//         return res.data;
-//     } catch (error) {
-//         throw error?.response?.data || error;
-//     }
-// };
+
 
 export const getUsersIncomeHistory = async (id, page = 1, limit = 10) => {
     try {

@@ -22,24 +22,6 @@ export const signUp = async(formData) =>{
     }
 }
 
-// export const signIn = async(formData) =>{
-//     try {
-//         const response = await axiosConfig.post("/admin/login",{
-//             email: formData.email,
-//             password: formData.password
-//         })
-//          if (response.data.data.accessToken) {
-//             localStorage.setItem('accessToken', response.data.data.accessToken);
-//         }
-//         if (response.data.data.refreshToken) {
-//             localStorage.setItem('refreshToken', response.data.data.refreshToken);
-//         }
-//          return response.data
-//     } catch (error) {
-//         console.error('signin failed', error?.response?.data || error.message);
-//          throw error
-//     }
-// }
 
 
 export const changePassword = async(passwordData)=>{
